@@ -5,7 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class BattleManager : MonoBehaviour
 {
-    GameObject[] controllableUnits, assassins, civillians;
+    GameObject[] controllableUnits, assassins, civilians;
+    bool[] hasMoved;
     public Tilemap tiles;
     int[][] board;
     int empty = -1;
@@ -15,19 +16,27 @@ public class BattleManager : MonoBehaviour
     int knight = 3;
     int jester = 4;
     int noble = 5;
-    int civillian = 6;
+    int civilian = 6;
     int assassin = 7;
     int gridSize = 10;
 
     // Start is called before the first frame update
     void Start()
     {
+        if (gridSize % 2 != 0)
+        {
+            Debug.LogError("Grid size is not divisible by 2!");
+            return;
+        }
+
         board = new int[gridSize][];
+        hasMoved = new bool[controllableUnits.Length];
         readTiles();
-        printBoard();
         controllableUnits = GameObject.FindGameObjectsWithTag("Unit");
         assassins = GameObject.FindGameObjectsWithTag("Assassin");
-        civillians = GameObject.FindGameObjectsWithTag("Civillian");
+        civilians = GameObject.FindGameObjectsWithTag("Civillian");
+        readUnits();
+        printBoard();
     }
 
     // Update is called once per frame
@@ -37,6 +46,11 @@ public class BattleManager : MonoBehaviour
     }
 
     void predictAssassinMove()
+    {
+
+    }
+
+    void moveToPosition(GameObject moving)
     {
 
     }
@@ -60,11 +74,6 @@ public class BattleManager : MonoBehaviour
 
     void readTiles()
     {
-        if (gridSize % 2 != 0)
-        {
-            Debug.Log("Grid size is not divisible by 2!");
-            return;
-        }
         //Grid coordinate refers to bottom-left corner of tile Ex// Tile with bottom left corner at 0,0,0 is at Vector3Int(0,0,0)
         for(int i = -(gridSize / 2); i < gridSize -(gridSize / 2); i++)
         {
@@ -92,9 +101,57 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    void readUnits()
+    {
+        for(int i = 0; i < controllableUnits.Length; i++)
+        {
+            Vector3 pos = controllableUnits[i].transform.position;
+            Vector3Int tilePos = tiles.WorldToCell(pos);
+            int x = tilePos.x + gridSize/2;
+            int y = tilePos.y + gridSize/2;
+
+            //Debug.Log(x + " " + y);
+
+            switch (controllableUnits[i].GetComponent<ControllableUnit>().getUnitType())
+            {
+                case ControllableUnit.UnitType.KNIGHT:
+                    board[x][y] = knight;
+                    break;
+                case ControllableUnit.UnitType.JESTER:
+                    board[x][y] = jester;
+                    break;
+                case ControllableUnit.UnitType.NOBLE:
+                    board[x][y] = noble;
+                    break;
+            }
+        }
+        for (int i = 0; i < assassins.Length; i++)
+        {
+            Vector3 pos = assassins[i].transform.position;
+            Vector3Int tilePos = tiles.WorldToCell(pos);
+            int x = tilePos.x + gridSize / 2;
+            int y = tilePos.y + gridSize / 2;
+
+            //Debug.Log(x + " " + y);
+
+            board[x][y] = assassin;
+        }
+        for (int i = 0; i < civilians.Length; i++)
+        {
+            Vector3 pos = civilians[i].transform.position;
+            Vector3Int tilePos = tiles.WorldToCell(pos);
+            int x = tilePos.x + gridSize / 2;
+            int y = tilePos.y + gridSize / 2;
+
+            //Debug.Log(x + " " + y);
+
+            board[x][y] = civilian;
+        }
+    }
+
     void printBoard()
     {
-        for(int i = 0; i < gridSize; i++)
+        for(int i = gridSize - 1; i > 0; i--)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             for(int j = 0; j < gridSize; j++)
@@ -105,3 +162,4 @@ public class BattleManager : MonoBehaviour
         }
     }
 }
+

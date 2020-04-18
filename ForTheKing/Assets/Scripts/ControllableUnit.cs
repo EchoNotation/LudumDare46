@@ -41,6 +41,13 @@ public class ControllableUnit : MonoBehaviour
         
     }
 
+    private void OnMouseDown()
+    {
+        //signal to UI to draw selection over this unit
+
+        //show option menu
+    }
+
     public UnitType getUnitType()
     {
         return unitType;
