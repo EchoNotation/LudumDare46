@@ -63,7 +63,7 @@ public class BattleManager : MonoBehaviour
             controllableUnits[i].GetComponent<ControllableUnit>().unitID = i;
         }
 
-        debugPath = findPathTo(new Vector2Int(-4, 3), new Vector2Int(-4, -1));
+        debugPath = findPathTo(new Vector2Int(3, 3), new Vector2Int(-3, 2));
         if (debugPath == null) Debug.Log("No path found");
         else
             for (int i = 0; i < debugPath.Length; i++)
@@ -243,14 +243,14 @@ public class BattleManager : MonoBehaviour
         Node start = new Node(null, src.x, src.y);
         Node end = new Node(null, dest.x, dest.y);
 
-        int boardSquareID = board[start.x + gridSize/2][start.y + gridSize/2];
+        int boardSquareID = board[Mathf.Abs(src.y - 4)][src.x + gridSize/2];
         if(boardSquareID != passable)
         {
             Debug.Log("Can't Pathfind: start is not passable");
             return null;
         }
 
-        boardSquareID = board[start.x + gridSize/2][start.y + gridSize/2];
+        boardSquareID = board[Mathf.Abs(dest.y - 4)][dest.x + gridSize/2];
         if(boardSquareID != passable)
         {
             Debug.Log("Can't Pathfind: end is not passable");
@@ -368,7 +368,7 @@ public class BattleManager : MonoBehaviour
 
         //check valid square to move to
         //TODO this is NOT CORRECT
-        int boardSquareID = board[child.x + gridSize/2][child.y + gridSize/2];
+        int boardSquareID = board[Mathf.Abs(child.y - 4)][child.x + gridSize/2];
         if(boardSquareID != passable)
         {
             return null;
