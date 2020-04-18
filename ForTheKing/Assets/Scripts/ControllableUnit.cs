@@ -11,15 +11,43 @@ public class ControllableUnit : MonoBehaviour
         NOBLE
     }
 
+    public UnitType unitType;
+    public Sprite knightSprite, jesterSprite, nobleSprite;
+    private int speed;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        switch(unitType)
+        {
+            case UnitType.KNIGHT:
+                speed = 1;
+                this.GetComponent<SpriteRenderer>().sprite = knightSprite;
+                break;
+            case UnitType.JESTER:
+                this.GetComponent<SpriteRenderer>().sprite = jesterSprite;
+                speed = 3;
+                break;
+            case UnitType.NOBLE:
+                this.GetComponent<SpriteRenderer>().sprite = nobleSprite;
+                speed = 2;
+                break;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public UnitType getUnitType()
+    {
+        return unitType;
+    }
+
+    public int getSpeed()
+    {
+        return speed;
     }
 }
