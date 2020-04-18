@@ -1,10 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class SceneController : MonoBehaviour
+public class ControllableUnit : MonoBehaviour
 {
+    public enum UnitType
+    {
+        KNIGHT,
+        JESTER,
+        NOBLE
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,15 +21,5 @@ public class SceneController : MonoBehaviour
     void Update()
     {
         
-    }
-
-    public void LoadScene(string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
-    }
-
-    public void Quit()
-    {
-        Application.Quit();
     }
 }
