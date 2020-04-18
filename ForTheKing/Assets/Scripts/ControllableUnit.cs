@@ -10,6 +10,8 @@ public class ControllableUnit : MonoBehaviour
     public int gridY = 0;
 
     public bool hasMoved = false;
+    public bool hasTakenAction = false;
+    public int unitID;
 
     public enum UnitType
     {

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BattleUI : MonoBehaviour
 {
@@ -64,6 +65,22 @@ public class BattleUI : MonoBehaviour
     {
         //do whatever the special for the selected unit is
         awaitingInput = true;
+        
+        switch(currentlySelected.GetComponent<ControllableUnit>().getUnitType())
+        {
+            case ControllableUnit.UnitType.KNIGHT:
+                //TODO Add Knight special.
+                break;
+            case ControllableUnit.UnitType.JESTER:
+                currentAction = Action.TAUNT;
+                break;
+            case ControllableUnit.UnitType.NOBLE:
+                currentAction = Action.COIN;
+                break;
+            default:
+                Debug.Log("Invalid UnitType in OnSpecial! UnitType: " + currentlySelected.GetComponent<ControllableUnit>().getUnitType().ToString());
+                break;
+        }
     }
 
     public void onTileClick(int x, int y)
@@ -96,6 +113,25 @@ public class BattleUI : MonoBehaviour
         if(awaitingInput)
         {
             //do the thing
+            if(currentAction == Action.SHOVE)
+            {
+                if (currentlySelected.GetComponent<ControllableUnit>().hasTakenAction) return;
+
+                //Check if selection is valid: Adjacent to current unit
+
+            }
+            else if(currentAction == Action.TAUNT)
+            {
+                if (currentlySelected.GetComponent<ControllableUnit>().hasTakenAction) return;
+
+                if(clicked.CompareTag("Assassin"))
+                {
+                    //Taunt the assassin
+
+                    currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+                    unSelect();
+                }
+            }
         }
         else
         {
@@ -111,6 +147,11 @@ public class BattleUI : MonoBehaviour
         awaitingInput = false;
         //show option menu
         optionCanvas.enabled = true;
+
+        GameObject.Find("MoveButton").GetComponent<Button>().interactable = !select.GetComponent<ControllableUnit>().hasMoved;
+        bool canTakeAction = !select.GetComponent<ControllableUnit>().hasTakenAction;
+        GameObject.Find("ShoveButton").GetComponent<Button>().interactable = canTakeAction;
+        GameObject.Find("SpecialButton").GetComponent<Button>().interactable = canTakeAction;
     }
 
     public void unSelect()

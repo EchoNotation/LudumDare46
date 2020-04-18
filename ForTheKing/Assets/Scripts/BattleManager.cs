@@ -40,6 +40,11 @@ public class BattleManager : MonoBehaviour
         readUnits();
         //printBoard();
         calvaryText.text = "Calvary arrive in " + turnsToSurvive + " turns!";
+
+        for(int i = 0; i < controllableUnits.Length; i++)
+        {
+            controllableUnits[i].GetComponent<ControllableUnit>().unitID = i;
+        }
     }
 
     // Update is called once per frame
