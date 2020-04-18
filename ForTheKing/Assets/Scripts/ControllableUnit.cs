@@ -43,7 +43,7 @@ public class ControllableUnit : MonoBehaviour
 
         ////align the unit with the tile on Start
         Tilemap tiles = FindObjectOfType<Tilemap>();
-        int gridSize = tiles.size.x;
+        int gridSize = tiles.size.y;
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, 0);
         transform.position = tiles.CellToWorld(new Vector3Int(gridX - gridSize/2, gridY - gridSize/2, 0)) + offset;
     }
