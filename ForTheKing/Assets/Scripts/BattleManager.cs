@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class BattleManager : MonoBehaviour
     int assassin = 7;
     int gridSize = 10;
 
+    public Text calvaryText;
+    public int turnsToSurvive;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -35,6 +39,7 @@ public class BattleManager : MonoBehaviour
         civilians = GameObject.FindGameObjectsWithTag("Civillian");
         readUnits();
         //printBoard();
+        calvaryText.text = "Calvary arrive in " + turnsToSurvive + " turns!";
     }
 
     // Update is called once per frame
@@ -92,6 +97,23 @@ public class BattleManager : MonoBehaviour
         //Finalizes everything, lets Assassins take their turn.
         civillianTurn();
         assassinTurn();
+        turnsToSurvive--;
+
+        if(turnsToSurvive <= 0)
+        {
+            //Victory!
+        }
+        else
+        {
+            if (turnsToSurvive == 1)
+            {
+                calvaryText.text = "Calvary arrive in 1 turn!";
+            }
+            else
+            {
+                calvaryText.text = "Calvary arrive in " + turnsToSurvive + " turns!";
+            }
+        }
     }
 
     void civillianTurn()

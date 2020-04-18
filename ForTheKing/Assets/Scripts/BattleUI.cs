@@ -5,6 +5,7 @@ using UnityEngine;
 public class BattleUI : MonoBehaviour
 {
     public GameObject currentlySelected;
+    public Canvas optionCanvas;
 
     bool hasSelection = false;
 
@@ -27,6 +28,7 @@ public class BattleUI : MonoBehaviour
     void Start()
     {
         battleManager = FindObjectOfType<BattleManager>();
+        optionCanvas.enabled = false;
     }
 
     // Update is called once per frame
@@ -108,6 +110,7 @@ public class BattleUI : MonoBehaviour
         hasSelection = true;
         awaitingInput = false;
         //show option menu
+        optionCanvas.enabled = true;
     }
 
     public void unSelect()
@@ -116,6 +119,7 @@ public class BattleUI : MonoBehaviour
         hasSelection = false;
         currentAction = Action.NONE;
         awaitingInput = false;
+        optionCanvas.enabled = false;
     }
 
     private void OnDrawGizmos()
