@@ -223,9 +223,9 @@ public class BattleManager : MonoBehaviour
         public int x;
         public int y;
 
-        public int f = 0;
-        public int g = 0;
-        public int h = 0;
+        public double f = 0.0;
+        public double g = 0.0;
+        public double h = 0.0;
 
         public Node parent = null;
 
@@ -302,13 +302,21 @@ public class BattleManager : MonoBehaviour
             List<Node> children = new List<Node>();
 
             Node upLeft = createChildIfValid(current_node, -1, 1);
-            if (upLeft != null) children.Add(upLeft);
+            if (upLeft != null)
+            {
+                children.Add(upLeft);
+                upLeft.g += 1.5;
+            }
             
             Node upMid = createChildIfValid(current_node, 0, 1);
             if (upMid != null) children.Add(upMid);
 
             Node upRight = createChildIfValid(current_node, 1, 1);
-            if (upRight != null) children.Add(upRight);
+            if (upRight != null)
+            {
+                upRight.g += 1.5;
+                children.Add(upRight);
+            }
             
             Node left = createChildIfValid(current_node, -1, 0);
             if (left != null) children.Add(left);
@@ -317,13 +325,21 @@ public class BattleManager : MonoBehaviour
             if (right != null) children.Add(right);
 
             Node downLeft = createChildIfValid(current_node, -1, -1);
-            if (downLeft != null) children.Add(downLeft);
+            if (downLeft != null)
+            {
+                downLeft.g += 1.5;
+                children.Add(downLeft);
+            }
 
             Node downMid = createChildIfValid(current_node, 0, -1);
             if (downMid != null) children.Add(downMid);
 
             Node downRight = createChildIfValid(current_node, 1, -1);
-            if (downRight != null) children.Add(downRight);
+            if (downRight != null)
+            {
+                downRight.g += 1.5;
+                children.Add(downRight);
+            }
 
             //loop through children
             for(int i = 0; i < children.Count; i++)
@@ -367,7 +383,6 @@ public class BattleManager : MonoBehaviour
         }
 
         //check valid square to move to
-        //TODO this is NOT CORRECT
         int boardSquareID = board[Mathf.Abs(child.y - 4)][child.x + gridSize/2];
         if(boardSquareID != passable)
         {
