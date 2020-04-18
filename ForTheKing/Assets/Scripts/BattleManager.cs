@@ -9,7 +9,12 @@ public enum Direction
     UP,
     LEFT,
     DOWN,
-    RIGHT
+    RIGHT,
+    UP_LEFT,
+    UP_RIGHT,
+    DOWN_LEFT,
+    DOWN_RIGHT,
+    NONE
 }
 
 public class BattleManager : MonoBehaviour
@@ -28,7 +33,7 @@ public class BattleManager : MonoBehaviour
     int assassin = 7;
     int gridSize = 10;
 
-    public Text calvaryText;
+    public Text cavalryText;
     public int turnsToSurvive;
 
     // Start is called before the first frame update
@@ -47,7 +52,7 @@ public class BattleManager : MonoBehaviour
         civilians = GameObject.FindGameObjectsWithTag("Civillian");
         readUnits();
         //printBoard();
-        calvaryText.text = "Calvary arrive in " + turnsToSurvive + " turns!";
+        cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
 
         for(int i = 0; i < controllableUnits.Length; i++)
         {
@@ -68,7 +73,7 @@ public class BattleManager : MonoBehaviour
 
     public void moveToPosition(GameObject moving, Vector2 newPos)
     {
-        Debug.Log("moveToPosition");
+        //Debug.Log("moveToPosition");
         //TODO have battle UI deal with it
         if (moving.GetComponent<ControllableUnit>().hasMoved) return;
 
@@ -76,7 +81,7 @@ public class BattleManager : MonoBehaviour
         int oldX = moving.GetComponent<ControllableUnit>().gridX;
         int oldY = moving.GetComponent<ControllableUnit>().gridY;
 
-        Debug.Log("oldX " + oldX + " oldY " + oldY);
+        //Debug.Log("oldX " + oldX + " oldY " + oldY);
 
         board[oldX][oldY] = passable;
 
@@ -95,19 +100,87 @@ public class BattleManager : MonoBehaviour
         }
 
         //if you have bug, look here
-        board[(int)(newPos.x) + gridSize / 2][(int)(newPos.y) + gridSize / 2] = controllableType;
+        int newX = (int)(newPos.x) + gridSize / 2;
+        int newY = (int)(newPos.y) + gridSize / 2;
+        board[newX][newY] = controllableType;
+        moving.GetComponent<ControllableUnit>().gridX = newX;
+        moving.GetComponent<ControllableUnit>().gridY = newY;
 
         //move prefab to correct location
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, 0);
         moving.transform.position = tiles.CellToWorld(new Vector3Int((int)newPos.x, (int)newPos.y, 0)) + offset;
-
-        //disable ability to move
-        moving.GetComponent<ControllableUnit>().hasMoved = false;
     }
 
     public void shove(GameObject shoved, Direction dir)
     {
+        int startX = 0;
+        int startY = 0;
 
+        if(shoved.CompareTag("Unit"))
+        {
+            startX = shoved.GetComponent<ControllableUnit>().gridX;
+            startY = shoved.GetComponent<ControllableUnit>().gridY;
+        }
+        else if(shoved.CompareTag("Civilian"))
+        {
+
+        }
+
+        int shovedType = board[startX][startY];
+
+        int endX = startX;
+        int endY = startY;
+
+        switch(dir)
+        {
+            case Direction.UP:
+                endY++;
+                break;
+            case Direction.LEFT:
+                endX--;
+                break;
+            case Direction.DOWN:
+                endY--;
+                break;
+            case Direction.RIGHT:
+                endX++;
+                break;
+            case Direction.UP_LEFT:
+                endX--;
+                endY++;
+                break;
+            case Direction.UP_RIGHT:
+                endX++;
+                endY++;
+                break;
+            case Direction.DOWN_LEFT:
+                endX--;
+                endY--;
+                break;
+            case Direction.DOWN_RIGHT:
+                endX++;
+                endY--;
+                break;
+            default:
+                Debug.Log("Invalid direction in shove! Dir: " + dir.ToString());
+                break;
+        }
+
+        board[startX][startY] = passable;
+        board[endX][endY] = shovedType;
+
+        if (shoved.CompareTag("Unit"))
+        {
+            shoved.GetComponent<ControllableUnit>().gridX = endX;
+            shoved.GetComponent<ControllableUnit>().gridY = endY;
+        }
+        else if (shoved.CompareTag("Civilian"))
+        {
+
+        }
+
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, 0);
+        shoved.transform.position = tiles.CellToWorld(new Vector3Int((int)endX - (gridSize / 2), (int)endY - (gridSize / 2), 0)) + offset;
     }
 
     public void tossCoin(Vector2Int pos)
@@ -115,7 +188,7 @@ public class BattleManager : MonoBehaviour
 
     }
 
-    void commit()
+    public void commit()
     {
         //Finalizes everything, lets Assassins take their turn.
         civillianTurn();
@@ -130,13 +203,18 @@ public class BattleManager : MonoBehaviour
         {
             if (turnsToSurvive == 1)
             {
-                calvaryText.text = "Calvary arrive in 1 turn!";
+                cavalryText.text = "Cavalry arrive in 1 turn!";
             }
             else
             {
-                calvaryText.text = "Calvary arrive in " + turnsToSurvive + " turns!";
+                cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
             }
         }
+    }
+
+    public void rewind()
+    {
+        
     }
 
     void civillianTurn()
@@ -227,6 +305,13 @@ public class BattleManager : MonoBehaviour
 
             board[x][y] = civilian;
         }
+
+        /*Vector3 kingPos = GameObject.FindGameObjectWithTag("King").transform.position;
+        Vector3Int kingTile = tiles.WorldToCell(kingPos);
+        int kingX = kingTile.x + (gridSize / 2);
+        int kingY = kingTile.y + (gridSize / 2);
+
+        board[kingX][kingY] = king;*/
     }
 
     void printBoard()
@@ -240,6 +325,11 @@ public class BattleManager : MonoBehaviour
             }
             Debug.Log(sb.ToString());
         }
+    }
+
+    public int[][] getBoard()
+    {
+        return board;
     }
 }
 

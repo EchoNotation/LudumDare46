@@ -405,7 +405,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 185481407}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 481920582}
+        m_MethodName: onNextTurn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &185481407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -613,7 +624,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Calvary arrive\n in X turns"
+  m_Text: "Cavalry arrive\n in X turns!"
 --- !u!222 &547771273
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -644,6 +655,11 @@ PrefabInstance:
       propertyPath: turnsToSurvive
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
+        type: 3}
+      propertyPath: cavalryText
+      value: 
+      objectReference: {fileID: 547771272}
     - target: {fileID: 2928117637307730891, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
       propertyPath: m_Name
@@ -815,6 +831,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5182747819497706570, guid: 2a6a1e7f10854f34ba1433e2cecbc084,
+        type: 3}
+      propertyPath: unitType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1260888523148282939, guid: 2a6a1e7f10854f34ba1433e2cecbc084,
         type: 3}
       propertyPath: m_Name
@@ -1461,7 +1482,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1094850340}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 481920582}
+        m_MethodName: onRewind
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1094850340
 MonoBehaviour:
   m_ObjectHideFlags: 0
