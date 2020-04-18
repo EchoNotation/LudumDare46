@@ -13,6 +13,10 @@ public class Assassin : MonoBehaviour
     void Start()
     {
         king = GameObject.FindGameObjectWithTag("King");
+    }
+
+    public void snapToGrid()
+    {
         Tilemap tiles = FindObjectOfType<Tilemap>();
         int gridSize = tiles.size.y;
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, 0);

@@ -11,6 +11,11 @@ public class King : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+    }
+
+    public void snapToGrid()
+    {
         Tilemap tiles = FindObjectOfType<Tilemap>();
         int gridSize = tiles.size.y;
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, 0);
