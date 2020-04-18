@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class ControllableUnit : MonoBehaviour
 {
@@ -39,6 +40,12 @@ public class ControllableUnit : MonoBehaviour
                 speed = 2;
                 break;
         }
+
+        ////align the unit with the tile on Start
+        Tilemap tiles = FindObjectOfType<Tilemap>();
+        int gridSize = tiles.size.x;
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, 0);
+        transform.position = tiles.CellToWorld(new Vector3Int(gridX - gridSize/2, gridY - gridSize/2, 0)) + offset;
     }
 
     // Update is called once per frame

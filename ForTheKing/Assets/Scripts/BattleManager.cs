@@ -20,7 +20,7 @@ public class BattleManager : MonoBehaviour
     int gridSize = 10;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (gridSize % 2 != 0)
         {
