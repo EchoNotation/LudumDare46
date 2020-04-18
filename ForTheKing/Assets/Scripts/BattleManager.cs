@@ -30,9 +30,9 @@ public class BattleManager : MonoBehaviour
         }
 
         board = new int[gridSize][];
-        hasMoved = new bool[controllableUnits.Length];
         readTiles();
         controllableUnits = GameObject.FindGameObjectsWithTag("Unit");
+        hasMoved = new bool[controllableUnits.Length];
         assassins = GameObject.FindGameObjectsWithTag("Assassin");
         civilians = GameObject.FindGameObjectsWithTag("Civillian");
         readUnits();

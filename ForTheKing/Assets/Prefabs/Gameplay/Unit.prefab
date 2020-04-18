@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6457880291890530322}
   - component: {fileID: 2232989657690353704}
   - component: {fileID: -5182747819497706570}
+  - component: {fileID: 4620792187123124293}
   m_Layer: 0
   m_Name: Unit
   m_TagString: Unit
@@ -71,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 782fcbb44af04f649ac5bd95a69100f2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -79,7 +80,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &-5182747819497706570
@@ -95,9 +96,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitType: 2
-  knightSprite: {fileID: 8490642196906846815, guid: 32dea7eed7c69ed4c9a2b80587f32aeb,
-    type: 3}
-  jesterSprite: {fileID: 7988907048659085410, guid: 32dea7eed7c69ed4c9a2b80587f32aeb,
-    type: 3}
-  nobleSprite: {fileID: -8420670720628680731, guid: 32dea7eed7c69ed4c9a2b80587f32aeb,
-    type: 3}
+  knightSprite: {fileID: 21300000, guid: 782fcbb44af04f649ac5bd95a69100f2, type: 3}
+  jesterSprite: {fileID: 21300000, guid: 782fcbb44af04f649ac5bd95a69100f2, type: 3}
+  nobleSprite: {fileID: 21300000, guid: 782fcbb44af04f649ac5bd95a69100f2, type: 3}
+--- !u!61 &4620792187123124293
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260888523148282939}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.0065357685, y: 0.0135166645}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.9856677, y: 0.9655595}
+  m_EdgeRadius: 0

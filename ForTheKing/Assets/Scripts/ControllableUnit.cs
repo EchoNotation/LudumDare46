@@ -44,8 +44,8 @@ public class ControllableUnit : MonoBehaviour
     private void OnMouseDown()
     {
         //signal to UI to draw selection over this unit
+        GameObject.Find("BattleManager").GetComponent<BattleUI>().setSelected(gameObject);
 
-        //show option menu
     }
 
     public UnitType getUnitType()
