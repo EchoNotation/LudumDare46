@@ -36,7 +36,7 @@ public class BattleManager : MonoBehaviour
         assassins = GameObject.FindGameObjectsWithTag("Assassin");
         civilians = GameObject.FindGameObjectsWithTag("Civillian");
         readUnits();
-        printBoard();
+        //printBoard();
     }
 
     // Update is called once per frame
