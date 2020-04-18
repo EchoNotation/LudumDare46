@@ -37,6 +37,8 @@ public class BattleManager : MonoBehaviour
     public Text cavalryText;
     public int turnsToSurvive;
 
+    Vector2Int[] debugPath;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -53,11 +55,36 @@ public class BattleManager : MonoBehaviour
         civilians = GameObject.FindGameObjectsWithTag("Civillian");
         readUnits();
         //printBoard();
+        printBoardIndicies();
         cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
 
         for(int i = 0; i < controllableUnits.Length; i++)
         {
             controllableUnits[i].GetComponent<ControllableUnit>().unitID = i;
+        }
+
+        debugPath = findPathTo(new Vector2Int(-4, 3), new Vector2Int(-4, -1));
+        if (debugPath == null) Debug.Log("No path found");
+        else
+            for (int i = 0; i < debugPath.Length; i++)
+                Debug.Log("Step "+ i + ": " + debugPath[i].x + ", " + debugPath[i].y);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (debugPath == null) return;
+
+        float offset = tiles.cellSize.x / 2;
+        Vector3 offset3D = new Vector3(offset, offset, 0);
+
+        Gizmos.DrawWireSphere(new Vector3(debugPath[0].x, debugPath[0].y, 0) + offset3D, 0.5f);
+        Gizmos.DrawWireSphere(new Vector3(debugPath[debugPath.Length-1].x, debugPath[debugPath.Length-1].y, 0) + offset3D, 0.5f);
+
+        for(int i = 0; i < debugPath.Length - 1; i++)
+        {
+            Vector3 lineStart = new Vector3(debugPath[i].x, debugPath[i].y, 0) + offset3D;
+            Vector3 lineEnd = new Vector3(debugPath[i + 1].x, debugPath[i + 1].y, 0) + offset3D;
+            Gizmos.DrawLine(lineStart, lineEnd);
         }
     }
 
@@ -188,6 +215,170 @@ public class BattleManager : MonoBehaviour
     {
 
     }
+
+    
+    //PATHFINDING
+    class Node
+    {
+        public int x;
+        public int y;
+
+        public int f = 0;
+        public int g = 0;
+        public int h = 0;
+
+        public Node parent = null;
+
+        public Node(Node parent, int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+
+            this.parent = parent;
+        }
+    }
+
+    public Vector2Int[] findPathTo(Vector2Int src, Vector2Int dest)
+    {
+        Node start = new Node(null, src.x, src.y);
+        Node end = new Node(null, dest.x, dest.y);
+
+        int boardSquareID = board[start.x + gridSize/2][start.y + gridSize/2];
+        if(boardSquareID != passable)
+        {
+            Debug.Log("Can't Pathfind: start is not passable");
+            return null;
+        }
+
+        boardSquareID = board[start.x + gridSize/2][start.y + gridSize/2];
+        if(boardSquareID != passable)
+        {
+            Debug.Log("Can't Pathfind: end is not passable");
+            return null;
+        }
+
+
+        List<Node> open = new List<Node>();
+        List<Node> closed = new List<Node>();
+
+        open.Add(start);
+
+        //loop until reach the end
+        while(open.Count > 0)
+        {
+            Node current_node = open[0];
+            int currentIdx = 0;
+
+            for(int i = 0; i < open.Count; i++)
+            {
+                if(open[i].f < current_node.f)
+                {
+                    current_node = open[i];
+                    currentIdx = i;
+                }
+            }
+
+            open.RemoveAt(currentIdx);
+            closed.Add(current_node);
+
+            if(current_node.x == dest.x && current_node.y == dest.y)
+            {
+                //generate path going backwards
+                List<Vector2Int> path = new List<Vector2Int>();
+
+                Node current = current_node;
+                while(current.parent != null)
+                {
+                    path.Add(new Vector2Int(current.x, current.y));
+                    current = current.parent;
+                }
+                path.Add(src);
+
+                path.Reverse();
+                return path.ToArray();
+            }
+
+            //generate children for all 8 directions
+            List<Node> children = new List<Node>();
+
+            Node upLeft = createChildIfValid(current_node, -1, 1);
+            if (upLeft != null) children.Add(upLeft);
+            
+            Node upMid = createChildIfValid(current_node, 0, 1);
+            if (upMid != null) children.Add(upMid);
+
+            Node upRight = createChildIfValid(current_node, 1, 1);
+            if (upRight != null) children.Add(upRight);
+            
+            Node left = createChildIfValid(current_node, -1, 0);
+            if (left != null) children.Add(left);
+
+            Node right = createChildIfValid(current_node, 1, 0);
+            if (right != null) children.Add(right);
+
+            Node downLeft = createChildIfValid(current_node, -1, -1);
+            if (downLeft != null) children.Add(downLeft);
+
+            Node downMid = createChildIfValid(current_node, 0, -1);
+            if (downMid != null) children.Add(downMid);
+
+            Node downRight = createChildIfValid(current_node, 1, -1);
+            if (downRight != null) children.Add(downRight);
+
+            //loop through children
+            for(int i = 0; i < children.Count; i++)
+            {
+                //don't use if child is already closed
+                for(int j = 0; j < closed.Count; j++)
+                {
+                    if(closed[j].x == children[i].x && closed[j].y == children[i].y)
+                    {
+                        continue;
+                    }
+                }
+
+                //update values
+                children[i].g = current_node.g + 1;
+                children[i].h = Mathf.CeilToInt(Vector2Int.Distance(new Vector2Int(children[i].x, children[i].y), dest));
+                children[i].f = children[i].g + children[i].h;
+
+                //add child to open list if not on the list already with more efficient path
+                for(int j = 0; j < open.Count; j++)
+                {
+                    if (children[i].x == open[j].x && children[i].y == open[j].y && children[i].g > open[j].g) continue;
+                }
+
+                open.Add(children[i]);
+            }
+        }
+
+        //no path found
+        return null;
+    }
+
+    private Node createChildIfValid(Node parent, int offsetx, int offsety)
+    {
+        Node child = new Node(parent, parent.x + offsetx, parent.y + offsety);
+
+        //check bounds
+        if(child.x < -5 || child.x > 4 || child.y > 4 || child.y < -5)
+        {
+            return null;
+        }
+
+        //check valid square to move to
+        //TODO this is NOT CORRECT
+        int boardSquareID = board[child.x + gridSize/2][child.y + gridSize/2];
+        if(boardSquareID != passable)
+        {
+            return null;
+        }
+
+        //safety checks passed
+        return child;
+    }
+
+
 
     public void commit()
     {
@@ -337,6 +528,23 @@ public class BattleManager : MonoBehaviour
             }
             Debug.Log(sb.ToString());
         }
+    }
+    
+    void printBoardIndicies()
+    {
+        string fullRes = " 0123456789\n";
+        Debug.Log("Length: " + board.Length);
+        for(int i = 0; i < board.Length; i++)
+        {
+            string res = i + " ";
+            for(int j = 0; j < board[i].Length; j++)
+            {
+                res += board[i][j];
+            }
+            fullRes += res + "\n";
+        }
+
+        Debug.Log(fullRes);
     }
 
     public int[][] getBoard()
