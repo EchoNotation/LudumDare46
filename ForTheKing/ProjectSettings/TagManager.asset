@@ -8,6 +8,7 @@ TagManager:
   - Civillian
   - Assassin
   - King
+  - Tilemap
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Units
   - 
   - 
   - 

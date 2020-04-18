@@ -131,6 +131,8 @@ public class BattleUI : MonoBehaviour
 
     public void onUnitClick(GameObject clicked)
     {
+        Debug.Log("Unit click");
+
         if(awaitingInput)
         {
             //do the thing

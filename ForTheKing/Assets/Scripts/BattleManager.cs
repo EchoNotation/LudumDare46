@@ -20,6 +20,7 @@ public enum Direction
 public class BattleManager : MonoBehaviour
 {
     GameObject[] controllableUnits, assassins, civilians;
+    GameObject kingObj;
     public Tilemap tiles;
     int[][] board;
     int empty = -1;
@@ -134,7 +135,7 @@ public class BattleManager : MonoBehaviour
         moving.GetComponent<ControllableUnit>().gridY = newY;
 
         //move prefab to correct location
-        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, 0);
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
         moving.transform.position = tiles.CellToWorld(new Vector3Int((int)newPos.x, (int)newPos.y, 0)) + offset;
     }
 
@@ -206,7 +207,7 @@ public class BattleManager : MonoBehaviour
 
         }
 
-        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, 0);
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
         shoved.transform.position = tiles.CellToWorld(new Vector3Int((int)endX - (gridSize / 2), (int)endY - (gridSize / 2), 0)) + offset;
     }
 
@@ -382,7 +383,7 @@ public class BattleManager : MonoBehaviour
     public void commit()
     {
         //Finalizes everything, lets Assassins take their turn.
-        civillianTurn();
+        civilianTurn();
         assassinTurn();
         turnsToSurvive--;
 
@@ -408,7 +409,7 @@ public class BattleManager : MonoBehaviour
         
     }
 
-    void civillianTurn()
+    void civilianTurn()
     {
 
     }
@@ -482,6 +483,9 @@ public class BattleManager : MonoBehaviour
             int y = tilePos.y + gridSize / 2;
 
             //Debug.Log(x + " " + y);
+            assassins[i].GetComponent<Assassin>().gridX = x;
+            assassins[i].GetComponent<Assassin>().gridY = y;
+            assassins[i].GetComponent<Assassin>().snapToGrid();
 
             board[x][y] = assassin;
         }
@@ -493,16 +497,24 @@ public class BattleManager : MonoBehaviour
             int y = tilePos.y + gridSize / 2;
 
             //Debug.Log(x + " " + y);
+            civilians[i].GetComponent<Civilian>().gridX = x;
+            civilians[i].GetComponent<Civilian>().gridY = y;
+            civilians[i].GetComponent<Civilian>().snapToGrid();
 
             board[x][y] = civilian;
         }
 
-        /*Vector3 kingPos = GameObject.FindGameObjectWithTag("King").transform.position;
+        kingObj = GameObject.Find("King");
+        Vector3 kingPos = kingObj.transform.position;
         Vector3Int kingTile = tiles.WorldToCell(kingPos);
         int kingX = kingTile.x + (gridSize / 2);
         int kingY = kingTile.y + (gridSize / 2);
 
-        board[kingX][kingY] = king;*/
+        kingObj.GetComponent<King>().gridX = kingX;
+        kingObj.GetComponent<King>().gridY = kingX;
+        kingObj.GetComponent<King>().snapToGrid();
+
+        board[kingX][kingY] = king;
     }
 
     void printBoard()
