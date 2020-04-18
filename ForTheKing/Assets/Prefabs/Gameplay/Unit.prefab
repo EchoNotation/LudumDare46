@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2232989657690353704}
   - component: {fileID: -5182747819497706570}
   - component: {fileID: 4620792187123124293}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Unit
   m_TagString: Unit
   m_Icon: {fileID: 0}
@@ -95,6 +95,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c24995aeb69e8b7469a50107f007d050, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gridX: 0
+  gridY: 0
+  hasMoved: 0
+  hasTakenAction: 0
+  unitID: 0
   unitType: 2
   knightSprite: {fileID: 21300000, guid: 782fcbb44af04f649ac5bd95a69100f2, type: 3}
   jesterSprite: {fileID: 21300000, guid: 782fcbb44af04f649ac5bd95a69100f2, type: 3}

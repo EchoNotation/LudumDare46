@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 205863279913468834}
   - component: {fileID: 4654402949433001047}
   - component: {fileID: 351643893707831914}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Civillian
   m_TagString: Civillian
   m_Icon: {fileID: 0}

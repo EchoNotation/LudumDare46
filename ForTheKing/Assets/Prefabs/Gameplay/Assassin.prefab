@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 18041925049642861}
   - component: {fileID: 2887024438253830284}
   - component: {fileID: 7702462768070395961}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Assassin
   m_TagString: Assassin
   m_Icon: {fileID: 0}
