@@ -6,7 +6,6 @@ using UnityEngine.Tilemaps;
 public class BattleManager : MonoBehaviour
 {
     GameObject[] controllableUnits, assassins, civilians;
-    bool[] hasMoved;
     public Tilemap tiles;
     int[][] board;
     int empty = -1;
@@ -32,7 +31,6 @@ public class BattleManager : MonoBehaviour
         board = new int[gridSize][];
         readTiles();
         controllableUnits = GameObject.FindGameObjectsWithTag("Unit");
-        hasMoved = new bool[controllableUnits.Length];
         assassins = GameObject.FindGameObjectsWithTag("Assassin");
         civilians = GameObject.FindGameObjectsWithTag("Civillian");
         readUnits();
@@ -50,9 +48,43 @@ public class BattleManager : MonoBehaviour
 
     }
 
-    void moveToPosition(GameObject moving)
+    public void moveToPosition(GameObject moving, Vector2 newPos)
     {
+        Debug.Log("moveToPosition");
+        //TODO have battle UI deal with it
+        if (moving.GetComponent<ControllableUnit>().hasMoved) return;
 
+        //update board (old and new spaces)
+        int oldX = moving.GetComponent<ControllableUnit>().gridX;
+        int oldY = moving.GetComponent<ControllableUnit>().gridY;
+
+        Debug.Log("oldX " + oldX + " oldY " + oldY);
+
+        board[oldX][oldY] = passable;
+
+        int controllableType = 0;
+        switch(moving.GetComponent<ControllableUnit>().getUnitType())
+        {
+            case ControllableUnit.UnitType.KNIGHT:
+                controllableType = knight;
+                break;
+            case ControllableUnit.UnitType.NOBLE:
+                controllableType = noble;
+                break;
+            case ControllableUnit.UnitType.JESTER:
+                controllableType = jester;
+                break;
+        }
+
+        //if you have bug, look here
+        board[(int)(newPos.x) + gridSize / 2][(int)(newPos.y) + gridSize / 2] = controllableType;
+
+        //move prefab to correct location
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, 0);
+        moving.transform.position = tiles.CellToWorld(new Vector3Int((int)newPos.x, (int)newPos.y, 0)) + offset;
+
+        //disable ability to move
+        moving.GetComponent<ControllableUnit>().hasMoved = false;
     }
 
     void commit()
@@ -109,6 +141,9 @@ public class BattleManager : MonoBehaviour
             Vector3Int tilePos = tiles.WorldToCell(pos);
             int x = tilePos.x + gridSize/2;
             int y = tilePos.y + gridSize/2;
+
+            controllableUnits[i].GetComponent<ControllableUnit>().gridX = x;
+            controllableUnits[i].GetComponent<ControllableUnit>().gridY = y;
 
             //Debug.Log(x + " " + y);
 

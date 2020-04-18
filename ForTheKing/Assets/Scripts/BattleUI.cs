@@ -10,10 +10,23 @@ public class BattleUI : MonoBehaviour
 
     bool awaitingInput = false;
 
+    BattleManager battleManager;
+
+    enum Action {
+        NONE,
+        MOVE,
+        SHOVE,
+        COIN,
+        TAUNT,
+       //TODO the night
+    }
+
+    Action currentAction = Action.NONE;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        battleManager = FindObjectOfType<BattleManager>();
     }
 
     // Update is called once per frame
@@ -30,10 +43,10 @@ public class BattleUI : MonoBehaviour
     {
         //highlight movable areas
 
-        //get ready for next tile click to be destination (how to do ?)
+        if (currentlySelected.GetComponent<ControllableUnit>().hasMoved) return;
 
-        //
         awaitingInput = true;
+        currentAction = Action.MOVE;
     }
 
     public void onShoveButton()
@@ -54,6 +67,26 @@ public class BattleUI : MonoBehaviour
     public void onTileClick(int x, int y)
     {
         Debug.Log(x + " " + y);
+
+        if(awaitingInput)
+        {
+            if(currentAction == Action.MOVE)
+            {
+                //TODO check if valid move
+                if (currentlySelected.GetComponent<ControllableUnit>().hasMoved) return;
+
+                //forward to battle manager
+                battleManager.moveToPosition(currentlySelected, new Vector2(x, y));
+
+                currentlySelected.GetComponent<ControllableUnit>().hasMoved = true;
+
+                unSelect();
+            }            
+            else if(currentAction == Action.COIN)
+            {
+
+            }
+        }
     }
 
     public void onUnitClick(GameObject clicked)
@@ -81,6 +114,8 @@ public class BattleUI : MonoBehaviour
     {
         currentlySelected = null;
         hasSelection = false;
+        currentAction = Action.NONE;
+        awaitingInput = false;
     }
 
     private void OnDrawGizmos()

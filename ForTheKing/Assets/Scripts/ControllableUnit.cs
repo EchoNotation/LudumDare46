@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class ControllableUnit : MonoBehaviour
 {
+
+    public int gridX = 0;
+    public int gridY = 0;
+
+    public bool hasMoved = false;
+
     public enum UnitType
     {
         KNIGHT,
