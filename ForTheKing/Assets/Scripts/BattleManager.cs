@@ -192,7 +192,7 @@ public class BattleManager : MonoBehaviour
     public void commit()
     {
         //Finalizes everything, lets Assassins take their turn.
-        civillianTurn();
+        civilianTurn();
         assassinTurn();
         turnsToSurvive--;
 
@@ -218,7 +218,7 @@ public class BattleManager : MonoBehaviour
         
     }
 
-    void civillianTurn()
+    void civilianTurn()
     {
 
     }
