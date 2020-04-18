@@ -26,8 +26,8 @@ public class Assassin : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RaycastHit2D hit = shoot(king);
-        Debug.Log(hit.collider.tag);
+        //RaycastHit2D hit = shoot(king);
+        //Debug.Log(hit.collider.tag);
     }
 
     public RaycastHit2D shoot(GameObject victim)
