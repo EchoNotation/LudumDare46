@@ -20,7 +20,7 @@ public class BattleUI : MonoBehaviour
         SHOVE,
         COIN,
         TAUNT,
-       //TODO the night
+       //TODO the knight
     }
 
     Action currentAction = Action.NONE;
@@ -44,7 +44,7 @@ public class BattleUI : MonoBehaviour
 
     public void onMoveButton()
     {
-        //highlight movable areas
+        //highlight movable areas Knight: moves like chess King, Noble: moves in 5 diameter circle, Jester: moves in 7 diameter circle
 
         if (currentlySelected.GetComponent<ControllableUnit>().hasMoved) return;
 
@@ -103,7 +103,13 @@ public class BattleUI : MonoBehaviour
             }            
             else if(currentAction == Action.COIN)
             {
+                if (currentlySelected.GetComponent<ControllableUnit>().hasTakenAction) return;
 
+                //Check if valid move
+
+                battleManager.tossCoin(new Vector2Int(x, y));
+                currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+                unSelect();              
             }
         }
     }
@@ -152,6 +158,26 @@ public class BattleUI : MonoBehaviour
         bool canTakeAction = !select.GetComponent<ControllableUnit>().hasTakenAction;
         GameObject.Find("ShoveButton").GetComponent<Button>().interactable = canTakeAction;
         GameObject.Find("SpecialButton").GetComponent<Button>().interactable = canTakeAction;
+
+        string specialText = "Special";
+
+        switch(select.GetComponent<ControllableUnit>().getUnitType())
+        {
+            case ControllableUnit.UnitType.JESTER:
+                specialText = "Taunt";
+                break;
+            case ControllableUnit.UnitType.KNIGHT:
+                //TODO add knight special.
+                break;
+            case ControllableUnit.UnitType.NOBLE:
+                specialText = "Toss Coin";
+                break;
+            default:
+                Debug.Log("Invalid UnitType! UnitType: " + select.GetComponent<ControllableUnit>().getUnitType().ToString());
+                break;
+        }
+
+        GameObject.Find("SpecialButton").GetComponentInChildren<Text>().text = specialText;
     }
 
     public void unSelect()

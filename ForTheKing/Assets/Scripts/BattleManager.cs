@@ -4,6 +4,14 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
+public enum Direction
+{
+    UP,
+    LEFT,
+    DOWN,
+    RIGHT
+}
+
 public class BattleManager : MonoBehaviour
 {
     GameObject[] controllableUnits, assassins, civilians;
@@ -95,6 +103,16 @@ public class BattleManager : MonoBehaviour
 
         //disable ability to move
         moving.GetComponent<ControllableUnit>().hasMoved = false;
+    }
+
+    public void shove(GameObject shoved, Direction dir)
+    {
+
+    }
+
+    public void tossCoin(Vector2Int pos)
+    {
+
     }
 
     void commit()
