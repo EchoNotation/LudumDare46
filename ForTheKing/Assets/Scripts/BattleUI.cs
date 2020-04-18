@@ -64,6 +64,8 @@ public class BattleUI : MonoBehaviour
 
         awaitingInput = true;
         currentAction = Action.MOVE;
+
+        currentlySelected.GetComponent<ControllableUnit>().updateMoveablePositions();
     }
 
     public void onShoveButton()
