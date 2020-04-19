@@ -68,18 +68,18 @@ public class ControllableUnit : MonoBehaviour
                 Vector2Int offset = new Vector2Int(i, j);
                 Vector2Int current = boardToTileSpace(gridX, gridY);
                 Vector2Int dest = current + offset;
-                Debug.Log("testing to " + dest + "an offset of " + offset);
+                //Debug.Log("testing to " + dest + "an offset of " + offset);
                 int dist = bmanager.pathDistance(current, dest);
                 if (dist == -1) continue;
                 if (dist <= speed + 1)
                 {
                     moveablePositions.Add(dest);
-                    Debug.Log("can move to " + dest);
+                    //Debug.Log("can move to " + dest);
                 }
             }
         }
 
-        Debug.Log("Found " + moveablePositions.Count + " spaces to move to");
+        //Debug.Log("Found " + moveablePositions.Count + " spaces to move to");
     }
 
     private Vector2Int boardToTileSpace(int i, int j)
