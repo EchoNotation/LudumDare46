@@ -749,13 +749,14 @@ public class BattleManager : MonoBehaviour
 
                 //update values
                 children[i].g = current_node.g + 1;
-                children[i].h = Mathf.CeilToInt(Vector2Int.Distance(new Vector2Int(children[i].x, children[i].y), new Vector2Int(end.x,end.y)));
+                //children[i].h = Mathf.CeilToInt(Vector2Int.Distance(new Vector2Int(children[i].x, children[i].y), new Vector2Int(end.x,end.y)));
+                children[i].h = Mathf.CeilToInt(Mathf.Abs(children[i].x - end.x) + Mathf.Abs(children[i].y - end.y)) + 1;
                 children[i].f = children[i].g + children[i].h;
 
-                if(children[i].h < range && range != -1)
-                {
-                    return constructPath(start, children[i]);
-                }
+                //if(children[i].h < range && range != -1)
+                //{
+                //    return constructPath(start, children[i]);
+                //}
 
                 bool wasOpen = false;
 
@@ -780,8 +781,29 @@ public class BattleManager : MonoBehaviour
         }
 
         //no path found
-        return null;
+        if (range != -1)
+        {
+            //find the child that got the closest
+            double closestDist = 100;
+            Node closest = null;
 
+            for(int i = 0; i < closed.Count; i++)
+            {
+                if(closed[i].h < closestDist)
+                {
+                    closestDist = closed[i].h;
+                    closest = closed[i];
+                }
+            }
+
+            if (closest != null)
+            {
+                Debug.Log("couldn't get within range, closest was " + closest.h + " tiles away");
+                return constructPath(start, closest);
+            }
+            else return null;
+        }
+        else return null;
     }
 
     private Vector2Int[] constructPath(Node start, Node end)
@@ -1075,6 +1097,8 @@ public class BattleManager : MonoBehaviour
 
                 if (pathToGold == null) continue;
 
+                Debug.Log("Distance to gold: " + pathToGold.Length);
+
                 if(pathToGold.Length > 1)
                 {
                     //Need to try to move closer to gold.
@@ -1216,6 +1240,14 @@ public class BattleManager : MonoBehaviour
                     civ.isAlive = false;
 
                     board[gridSize - 1 - civ.gridY][civ.gridX] = passable;
+                }
+                else if (script.target.tag == "King")
+                {
+                    King kingScript = script.target.GetComponent<King>();
+
+                    // kill king
+                    //TODO implement game over
+                    Debug.Log("The king is dead");
                 }
                 else Debug.LogError("assassin " + i + " has unidentified target! can't kill!");
             }
