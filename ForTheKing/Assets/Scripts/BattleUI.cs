@@ -10,6 +10,7 @@ public class BattleUI : MonoBehaviour
     public Canvas optionCanvas;
 
     public GameObject movementMarker;
+    public GameObject selectionMarker;
 
     bool hasSelection = false;
 
@@ -21,6 +22,8 @@ public class BattleUI : MonoBehaviour
     Tilemap tiles;
 
     public Button nextTurnButton;
+    public Button rewindButton;
+    public Button specialButton;
 
     [SerializeField]
     private bool debugUnlimitedMovement = false;
@@ -56,7 +59,8 @@ public class BattleUI : MonoBehaviour
         {
             unSelect();
         }
-        
+
+        updateRewindButton(battleManager.turnNumber);
     }
 
     public void onRewind()
@@ -383,7 +387,7 @@ public class BattleUI : MonoBehaviour
 
         string specialText = "Special";
 
-        switch(select.GetComponent<ControllableUnit>().getUnitType())
+        switch (select.GetComponent<ControllableUnit>().getUnitType())
         {
             case ControllableUnit.UnitType.JESTER:
                 specialText = "Taunt";
@@ -400,6 +404,9 @@ public class BattleUI : MonoBehaviour
         }
 
         GameObject.Find("SpecialButton").GetComponentInChildren<Text>().text = specialText;
+
+        updateSpecialButton(battleManager.goldExists[battleManager.turnNumber]);
+        selectionMarker.transform.position = currentlySelected.transform.position;
     }
 
     public void unSelect()
@@ -411,11 +418,40 @@ public class BattleUI : MonoBehaviour
         currentAction = Action.NONE;
         awaitingInput = false;
         optionCanvas.enabled = false;
+
+        selectionMarker.transform.position = new Vector3(-15, 3, 0);
     }
 
     private void OnDrawGizmos()
     {
         if(hasSelection && currentlySelected != null)
             Gizmos.DrawWireSphere(currentlySelected.transform.position, 1);
+    }
+
+    public void updateRewindButton(int turnNumber)
+    {
+        if(turnNumber <= 1)
+        {
+            rewindButton.interactable = false;
+        }
+        else
+        {
+            rewindButton.interactable = true;
+        }
+    }
+
+    public void updateSpecialButton(bool goldExists)
+    {
+        if(currentlySelected.GetComponent<ControllableUnit>().getUnitType() == ControllableUnit.UnitType.NOBLE)
+        {
+            if (goldExists)
+            {
+                specialButton.interactable = false;
+            }
+            else
+            {
+                specialButton.interactable = true;
+            }
+        }       
     }
 }
