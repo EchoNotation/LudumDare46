@@ -28,6 +28,7 @@ public class Sound : MonoBehaviour
         for(int i = 0; i < sources.Length; i++)
         {
             sources[i].clip = clips[i];
+            sources[i].volume = 0.6f;
         }
     }
 
