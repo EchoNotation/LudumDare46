@@ -204,6 +204,11 @@ public class BattleUI : MonoBehaviour
                 if (currentlySelected.GetComponent<ControllableUnit>().hasTakenAction) return;
 
                 //Check if valid move
+                int[][] tempBoard = battleManager.getBoard();
+
+                Debug.Log("X: " + x + " Y: " + y);
+
+                if (tempBoard[(gridSize - 1) - (y + 5)][(x + 5)] != battleManager.passable) return;
 
                 battleManager.tossCoin(new Vector2Int(x, y));
 
