@@ -109,6 +109,20 @@ public class BattleUI : MonoBehaviour
             if(currentAction == Action.MOVE)
             {
                 //TODO check if valid move
+                currentlySelected.GetComponent<ControllableUnit>().updateMoveablePositions();
+                Vector2Int[] moves = currentlySelected.GetComponent<ControllableUnit>().moveablePositions.ToArray();
+
+                bool validMovement = false;
+                for(int i = 0; i < moves.Length; i++)
+                {
+                    if(moves[i].x == x && moves[i].y == y)
+                    {
+                        validMovement = true;
+                        break;
+                    }
+                }
+
+                if (!validMovement) return;
                 if (currentlySelected.GetComponent<ControllableUnit>().hasMoved) return;
 
                 //forward to battle manager
