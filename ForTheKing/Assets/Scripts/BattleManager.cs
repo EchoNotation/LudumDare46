@@ -87,7 +87,7 @@ public class BattleManager : MonoBehaviour
             controllableUnits[i].GetComponent<ControllableUnit>().unitID = i;
         }
 
-        debugPath = findPathTo(new Vector2Int(3, 3), new Vector2Int(-3, 2));
+        debugPath = findPathTo(new Vector2Int(-1, -1), new Vector2Int(0, 0));
         if (debugPath == null) Debug.Log("No path found");
         else
             for (int i = 0; i < debugPath.Length; i++)
@@ -158,6 +158,8 @@ public class BattleManager : MonoBehaviour
         board[newX][newY] = controllableType;
         moving.GetComponent<ControllableUnit>().gridX = newX;
         moving.GetComponent<ControllableUnit>().gridY = newY;
+
+        moving.GetComponent<ControllableUnit>().updateMoveablePositions();
 
         //move prefab to correct location
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
@@ -263,19 +265,40 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    /*
+     * Calculates distance between two tile points on map
+     * Returns -1 if no path possible
+     */
+    public int pathDistance(Vector2Int src, Vector2Int dest)
+    {
+        Vector2Int[] path = findPathTo(src, dest);
+        if (path != null) return path.Length;
+        else return -1;
+    }
+
     public Vector2Int[] findPathTo(Vector2Int src, Vector2Int dest)
     {
         Node start = new Node(null, src.x, src.y);
         Node end = new Node(null, dest.x, dest.y);
 
-        int boardSquareID = board[Mathf.Abs(src.y - 4)][src.x + gridSize/2];
+
+        if(dest.x < -5 || dest.x > 4 || dest.y > 4 || dest.y < -5)
+        {
+            return null;
+        }
+
+        //int boardSquareID = board[Mathf.Abs(src.y - 4)][src.x + gridSize/2];
+        /*
         if(boardSquareID != passable)
         {
             Debug.Log("Can't Pathfind: start is not passable");
             return null;
         }
+        */
 
-        boardSquareID = board[Mathf.Abs(dest.y - 4)][dest.x + gridSize/2];
+        //check bounds of destination
+
+        int boardSquareID = board[Mathf.Abs(dest.y - 4)][dest.x + gridSize/2];
         if(boardSquareID != passable)
         {
             Debug.Log("Can't Pathfind: end is not passable");
