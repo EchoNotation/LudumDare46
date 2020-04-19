@@ -41,16 +41,18 @@ public class BattleManager : MonoBehaviour
     public int gridSize = 10;
 
     public GameObject assassinMarker;
+    public GameObject gold;
+
+    private Vector3 goldRestingPlace = new Vector3(-15, 0, 0);
 
     BattleUI battleUI;
 
     public Text cavalryText;
     public int turnsToSurvive;
-    public bool[] goldExists;
-    private Vector2Int[] goldGridPos;
+
+    private bool[] goldExists;
+    private Vector2Int[] goldTilePos;
     private bool[] goldWasPlacedThisTurn;
-    private bool removedGold;
-    private int civilianSpeed = 2;
 
     //Vector2Int[] debugPath;
 
@@ -65,9 +67,6 @@ public class BattleManager : MonoBehaviour
 
         board = new int[gridSize][];
 
-        goldExists = new bool[maxNumberOfTurns];
-        goldGridPos = new Vector2Int[maxNumberOfTurns];
-
         readTiles();
         controllableUnits = GameObject.FindGameObjectsWithTag("Unit");
         assassins = GameObject.FindGameObjectsWithTag("Assassin");
@@ -78,11 +77,14 @@ public class BattleManager : MonoBehaviour
         unitGridSpaces = new Vector2Int[maxNumberOfTurns][];
         assassinGridSpaces = new Vector2Int[maxNumberOfTurns][];
         civilianGridSpaces = new Vector2Int[maxNumberOfTurns][];
-        goldWasPlacedThisTurn = new bool[maxNumberOfTurns];
         savedBoards = new int[maxNumberOfTurns][][];
         unitStatuses = new bool[maxNumberOfTurns][];
         assassinStatuses = new bool[maxNumberOfTurns][];
         civilianStatuses = new bool[maxNumberOfTurns][];
+
+        goldExists = new bool[maxNumberOfTurns];
+        goldTilePos = new Vector2Int[maxNumberOfTurns];
+        goldWasPlacedThisTurn = new bool[maxNumberOfTurns];
 
         for(int i = 0; i < maxNumberOfTurns; i++)
         {
@@ -168,6 +170,9 @@ public class BattleManager : MonoBehaviour
     {
         //Debug.Log(turnNumber);
         if (Input.GetKeyDown(KeyCode.P)) printBoardIndicies();
+
+        //Debug.Log("GoldX: " + goldTilePos[turnNumber].x + " GoldY: " + goldTilePos[turnNumber].y);
+        //Debug.Log("TurnNumber: " + turnNumber);
     }
 
     //plans assassin moves
@@ -486,19 +491,14 @@ public class BattleManager : MonoBehaviour
 
     public void tossCoin(Vector2Int pos)
     {
-        if (goldExists[turnNumber]) {
-            Debug.Log("Gold already exists! No more can be spawned!");
-            return;
-        }
-
-        goldWasPlacedThisTurn[turnNumber] = true;
-        goldGridPos[turnNumber] = new Vector2Int(pos.x + 5, pos.y + 5);
-        goldExists[turnNumber] = true;
         //Enable/instantiate Gold prefab
         //Debug.Log("SpawningGold!");
+        if (goldExists[turnNumber]) return;
 
-        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
-        GameObject.Find("Gold").transform.position = tiles.CellToWorld(new Vector3Int((int)(pos.x + 5) - (gridSize / 2), (int)(pos.y + 5) - (gridSize / 2), 0)) + offset;
+        goldExists[turnNumber] = true;
+        goldTilePos[turnNumber] = pos;
+        goldWasPlacedThisTurn[turnNumber] = true;
+        moveGoldPrefab(pos);
     }
     
     public void taunt()
@@ -890,6 +890,10 @@ public class BattleManager : MonoBehaviour
     public void commit()
     {
         //Finalizes everything, lets Assassins take their turn.
+        goldExists[turnNumber + 1] = goldExists[turnNumber];
+        goldTilePos[turnNumber + 1] = goldTilePos[turnNumber];
+        goldWasPlacedThisTurn[turnNumber + 1] = false;
+
         assassinTurn();
         civilianTurn();
         turnsToSurvive--;
@@ -915,18 +919,6 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        if(removedGold)
-        {
-            goldExists[turnNumber + 1] = false;
-            goldGridPos[turnNumber + 1] = new Vector2Int();
-            GameObject.Find("Gold").transform.position = new Vector3(-15, 0, 0);             
-        }
-        else
-        {
-            goldExists[turnNumber + 1] = true;
-            goldGridPos[turnNumber + 1] = goldGridPos[turnNumber];
-        }
-
         turnNumber++;
         saveBoard(turnNumber);
 
@@ -935,7 +927,27 @@ public class BattleManager : MonoBehaviour
 
     public void rewind()
     {
-        if (turnNumber <= 1) return;
+        if (turnNumber < 2)
+        {
+            restartTurn();
+            return;
+        }
+
+        goldExists[turnNumber] = false;
+        goldTilePos[turnNumber] = new Vector2Int();
+        goldWasPlacedThisTurn[turnNumber] = false;
+        goldExists[turnNumber - 1] = goldExists[turnNumber - 2];
+        goldTilePos[turnNumber - 1] = goldTilePos[turnNumber - 2];
+
+        if(goldExists[turnNumber - 1])
+        {
+            moveGoldPrefab(goldTilePos[turnNumber - 1]);
+        }
+        else
+        {
+            gold.transform.position = goldRestingPlace;
+        }
+        
         turnNumber--;
         loadBoard(turnNumber);
         turnsToSurvive++;
@@ -946,23 +958,6 @@ public class BattleManager : MonoBehaviour
         kingObj.GetComponent<King>().isAlive = true;
         kingObj.GetComponent<BoxCollider2D>().enabled = true;
         kingObj.GetComponent<SpriteRenderer>().enabled = true;
-
-        goldExists[turnNumber + 1] = false;
-
-        if(goldWasPlacedThisTurn[turnNumber])
-        {
-            goldExists[turnNumber] = false;
-            GameObject.Find("Gold").transform.position = new Vector3(-15, 0, 0);
-        }
-        else if(goldExists[turnNumber])
-        {
-            Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
-            GameObject.Find("Gold").transform.position = tiles.CellToWorld(new Vector3Int((int)(goldGridPos[turnNumber].x) - (gridSize / 2), (int)(goldGridPos[turnNumber].y) - (gridSize / 2), 0)) + offset;
-        }
-        else
-        {
-            GameObject.Find("Gold").transform.position = new Vector3(-15, 0, 0);
-        }
 
         for(int i = 0; i < assassins.Length; i++)
         {
@@ -981,17 +976,30 @@ public class BattleManager : MonoBehaviour
         resetActions();
         loadBoard(turnNumber);
 
+        if(goldExists[turnNumber])
+        {
+            if(goldWasPlacedThisTurn[turnNumber])
+            {
+                //Remove
+                goldExists[turnNumber] = false;
+                goldTilePos[turnNumber] = new Vector2Int();
+                goldWasPlacedThisTurn[turnNumber] = false;
+                gold.transform.position = goldRestingPlace;
+            }
+            else
+            {
+                //Create
+                goldExists[turnNumber] = true;
+                goldTilePos[turnNumber] = goldTilePos[turnNumber - 1];
+                moveGoldPrefab(goldTilePos[turnNumber]);
+            }
+        }
+
         battleUI.nextTurnButton.interactable = true;
 
         kingObj.GetComponent<King>().isAlive = true;
         kingObj.GetComponent<BoxCollider2D>().enabled = true;
         kingObj.GetComponent<SpriteRenderer>().enabled = true;
-
-        if(goldWasPlacedThisTurn[turnNumber])
-        {
-            goldExists[turnNumber] = false;
-            GameObject.Find("Gold").transform.position = new Vector3(-15, 0, 0);
-        }
 
         for(int i = 0; i < assassins.Length; i++)
         {
@@ -1104,6 +1112,15 @@ public class BattleManager : MonoBehaviour
         
     }
 
+    void moveGoldPrefab(Vector2Int newLocation)
+    {
+        newLocation.x += 5;
+        newLocation.y += 5;
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
+        Vector3 goldWorldPos = tiles.CellToWorld(new Vector3Int(newLocation.x - gridSize / 2, newLocation.y - gridSize / 2, 0)) + offset;
+        gold.transform.position = goldWorldPos;
+    }
+
     void civilianTurn()
     {
         for(int i = 0; i < civilians.Length; i++)
@@ -1117,9 +1134,8 @@ public class BattleManager : MonoBehaviour
                 int origY = civilians[i].GetComponent<Civilian>().gridY;
 
                 Debug.Log("CivPos: " + origX + " " + origY);
-                Debug.Log("GoldPos: " + goldGridPos[turnNumber].x + " " + goldGridPos[turnNumber].y);
 
-                Vector2Int[] pathToGold = findPathClosest(1, new Vector2Int(origX - 5, origY - 5), new Vector2Int(goldGridPos[turnNumber].x - 5, goldGridPos[turnNumber].y - 5));
+                Vector2Int[] pathToGold = findPathClosest(1, new Vector2Int(origX - 5, origY - 5), new Vector2Int(goldTilePos[turnNumber].x, goldTilePos[turnNumber].y));
 
                 Debug.Log("PathLength: " + pathToGold.Length);
 
@@ -1213,11 +1229,12 @@ public class BattleManager : MonoBehaviour
             int civX = civilians[i].GetComponent<Civilian>().gridX;
             int civY = civilians[i].GetComponent<Civilian>().gridY;
 
-            if(Mathf.Abs(civX - goldGridPos[turnNumber].x) <= 1 && Mathf.Abs(civY - goldGridPos[turnNumber].y) <= 1)
+            if(Mathf.Abs(civX - (goldTilePos[turnNumber].x + 5)) <= 1 && Mathf.Abs(civY - (goldTilePos[turnNumber].y + 5)) <= 1)
             {
                 //Civilian is adjacent to the gold!
-                removedGold = true;
-                //TODO: Disable/remove Gold gameobject.
+                goldExists[turnNumber + 1] = false;
+                goldTilePos[turnNumber + 1] = new Vector2Int();
+                gold.transform.position = goldRestingPlace;
                 break;
             }
         }
