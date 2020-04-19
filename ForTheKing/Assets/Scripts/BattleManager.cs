@@ -894,7 +894,11 @@ public class BattleManager : MonoBehaviour
         civilianTurn();
         turnsToSurvive--;
 
-        if(turnsToSurvive <= 0)
+        if(!kingObj.GetComponent<King>().isAlive)
+        {
+
+        }
+        else if(turnsToSurvive <= 0)
         {
             //Victory!
             GameObject.Find("SceneManager").GetComponent<SceneController>().LoadScene("Victory");
@@ -937,6 +941,8 @@ public class BattleManager : MonoBehaviour
         turnsToSurvive++;
         cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
 
+        battleUI.nextTurnButton.interactable = true;
+
         goldExists[turnNumber + 1] = false;
 
         if(goldWasPlacedThisTurn[turnNumber])
@@ -970,6 +976,8 @@ public class BattleManager : MonoBehaviour
     {
         resetActions();
         loadBoard(turnNumber);
+
+        battleUI.nextTurnButton.interactable = true;
 
         if(goldWasPlacedThisTurn[turnNumber])
         {
@@ -1080,7 +1088,7 @@ public class BattleManager : MonoBehaviour
             Vector2Int temp3 = civilianGridSpaces[id][i];
             civilians[i].GetComponent<Civilian>().isAlive = civilianStatuses[id][i];
             civilians[i].GetComponent<SpriteRenderer>().enabled = civilianStatuses[id][i];
-            civilians[i].GetComponent<BoxCollider>().enabled = civilianStatuses[id][i];
+            civilians[i].GetComponent<BoxCollider2D>().enabled = civilianStatuses[id][i];
             civilians[i].GetComponent<Civilian>().gridX = temp3.x;
             civilians[i].GetComponent<Civilian>().gridY = temp3.y;
         }
@@ -1286,11 +1294,20 @@ public class BattleManager : MonoBehaviour
             King kingScript = toKill.GetComponent<King>();
 
             // kill king
+            kingScript.isAlive = false;
+
+            onKingKilled();
+
             //TODO implement game over
             Debug.Log("The king is dead");
         }
         else Debug.LogError("assassin has unidentified target! can't kill!");
 
+    }
+
+    public void onKingKilled()
+    {
+        battleUI.nextTurnButton.interactable = false;
     }
 
     /*

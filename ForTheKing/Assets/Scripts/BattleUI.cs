@@ -20,6 +20,8 @@ public class BattleUI : MonoBehaviour
 
     Tilemap tiles;
 
+    public Button nextTurnButton;
+
     [SerializeField]
     private bool debugUnlimitedMovement = false;
 
