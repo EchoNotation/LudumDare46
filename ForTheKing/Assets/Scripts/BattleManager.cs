@@ -145,6 +145,8 @@ public class BattleManager : MonoBehaviour
         }
         */
 
+        if (assassins == null) return;
+
         for(int i = 0; i < assassins.Length; i++)
         {
             Assassin script = assassins[i].GetComponent<Assassin>();
@@ -178,7 +180,7 @@ public class BattleManager : MonoBehaviour
         {
             Assassin script = assassins[i].GetComponent<Assassin>();
             Vector2Int pos = new Vector2Int(script.gridX - gridSize/2, script.gridY - gridSize/2);
-            Vector2Int[] fullPath = findPathClosest(script.range, pos, kingPos);
+            Vector2Int[] fullPath = findPathClosest(script.range - 2, pos, kingPos);
 
             script.target = null;
             script.endAction = Assassin.EndAction.IDLE;
@@ -268,8 +270,9 @@ public class BattleManager : MonoBehaviour
                     }
 
                     //if no one to stab, keep walking towards king
-                    else if(script.endAction != Assassin.EndAction.STAB && Vector2Int.Distance(currentPath[i], kingPos) < script.range)
+                    else if(script.endAction != Assassin.EndAction.STAB && Vector2Int.Distance(currentPath[i], kingPos) <= script.range)
                     {
+                        Debug.Log("not stabbing and in shooting range");
                         //if good distance, check sightline for wall
                         RaycastHit2D hit = lineOfSight(assassins[i], kingObj);
                         if(hit.collider.tag == "King")

@@ -121,5 +121,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d98de41ae7304f64abbd331a81772b19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  endAction: 0
   gridX: 0
   gridY: 0
+  isAlive: 1
+  target: {fileID: 0}
+  speed: 2
+  range: 5
+  desiredPath: []
+  nextTurnPath: []
