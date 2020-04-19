@@ -609,13 +609,13 @@ public class BattleManager : MonoBehaviour
             switch (controllableUnits[i].GetComponent<ControllableUnit>().getUnitType())
             {
                 case ControllableUnit.UnitType.KNIGHT:
-                    board[x][y] = knight;
+                    board[(gridSize - 1) - y][x] = knight;
                     break;
                 case ControllableUnit.UnitType.JESTER:
-                    board[x][y] = jester;
+                    board[(gridSize - 1) - y][x] = jester;
                     break;
                 case ControllableUnit.UnitType.NOBLE:
-                    board[x][y] = noble;
+                    board[(gridSize - 1) - y][x] = noble;
                     break;
             }
         }
@@ -631,7 +631,7 @@ public class BattleManager : MonoBehaviour
             assassins[i].GetComponent<Assassin>().gridY = y;
             assassins[i].GetComponent<Assassin>().snapToGrid();
 
-            board[x][y] = assassin;
+            board[(gridSize - 1) - y][x] = assassin;
         }
         for (int i = 0; i < civilians.Length; i++)
         {
@@ -645,7 +645,7 @@ public class BattleManager : MonoBehaviour
             civilians[i].GetComponent<Civilian>().gridY = y;
             civilians[i].GetComponent<Civilian>().snapToGrid();
 
-            board[x][y] = civilian;
+            board[(gridSize - 1) - y][x] = civilian;
         }
 
         kingObj = GameObject.Find("King");
@@ -655,10 +655,11 @@ public class BattleManager : MonoBehaviour
         int kingY = kingTile.y + (gridSize / 2);
 
         kingObj.GetComponent<King>().gridX = kingX;
-        kingObj.GetComponent<King>().gridY = kingX;
+        kingObj.GetComponent<King>().gridY = kingY;
         kingObj.GetComponent<King>().snapToGrid();
 
-        board[kingX][kingY] = king;
+        //Debug.Log(kingX + " " + kingY);
+        board[(gridSize - 1) - kingY][kingX] = king;
 
         saveBoard(turnNumber);
     }
