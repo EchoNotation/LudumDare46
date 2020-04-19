@@ -981,6 +981,7 @@ MonoBehaviour:
   optionCanvas: {fileID: 637214437}
   movementMarker: {fileID: 2180988831928738971, guid: 4c5b102902336c441942b396e835c387,
     type: 3}
+  debugUnlimitedMovement: 0
 --- !u!1 &529396499
 GameObject:
   m_ObjectHideFlags: 0
@@ -3944,12 +3945,12 @@ PrefabInstance:
     - target: {fileID: 6457880291890530322, guid: 2a6a1e7f10854f34ba1433e2cecbc084,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.33
+      value: 2.46
       objectReference: {fileID: 0}
     - target: {fileID: 6457880291890530322, guid: 2a6a1e7f10854f34ba1433e2cecbc084,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.72
+      value: -1.62
       objectReference: {fileID: 0}
     - target: {fileID: 6457880291890530322, guid: 2a6a1e7f10854f34ba1433e2cecbc084,
         type: 3}

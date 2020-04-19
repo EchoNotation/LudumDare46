@@ -243,8 +243,12 @@ public class BattleUI : MonoBehaviour
                     shovedY = clicked.GetComponent<Civilian>().gridY;
                 }
 
+                /*Debug.Log("ShoverX: " + shoverX + " ShoverY: " + shoverY);
+                Debug.Log("ShovedX: " + shovedX + " ShovedY: " + shovedY);*/
+
                 if (Mathf.Abs(shoverX - shovedX) <= 1 && Mathf.Abs(shoverY - shovedY) <= 1)
                 {
+
                     string shoveString = (shoverX - shovedX) + "" + (shoverY - shovedY);
                     Direction shoveDir = Direction.NONE;
 
