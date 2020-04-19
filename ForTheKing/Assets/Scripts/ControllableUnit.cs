@@ -12,6 +12,7 @@ public class ControllableUnit : MonoBehaviour
 
     public bool hasMoved = false;
     public bool hasTakenAction = false;
+    public bool isAlive = true;
     public int unitID;
 
     public List<Vector2Int> moveablePositions;

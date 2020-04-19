@@ -7,6 +7,7 @@ public class Assassin : MonoBehaviour
 {
     public int gridX = 0;
     public int gridY = 0;
+    public bool isAlive = true;
     private GameObject king;
 
     public int speed = 2;
