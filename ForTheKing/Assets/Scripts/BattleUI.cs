@@ -272,6 +272,7 @@ public class BattleUI : MonoBehaviour
 
     public void unSelect()
     {
+        currentlySelected.GetComponent<ControllableUnit>().moveablePositions.Clear();
         currentlySelected = null;
         hasSelection = false;
         currentAction = Action.NONE;
@@ -281,7 +282,7 @@ public class BattleUI : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if(hasSelection)
+        if(hasSelection && currentlySelected != null)
             Gizmos.DrawWireSphere(currentlySelected.transform.position, 1);
     }
 }
