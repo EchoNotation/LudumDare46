@@ -42,7 +42,7 @@ public class BattleManager : MonoBehaviour
     public Text cavalryText;
     public int turnsToSurvive;
 
-    Vector2Int[] debugPath;
+    //Vector2Int[] debugPath;
 
     // Start is called before the first frame update
     void Awake()
@@ -87,15 +87,16 @@ public class BattleManager : MonoBehaviour
             controllableUnits[i].GetComponent<ControllableUnit>().unitID = i;
         }
 
-        debugPath = findPathTo(new Vector2Int(-1, -1), new Vector2Int(0, 0));
+        /*debugPath = findPathTo(new Vector2Int(-1, -1), new Vector2Int(0, 0));
         if (debugPath == null) Debug.Log("No path found");
         else
             for (int i = 0; i < debugPath.Length; i++)
-                Debug.Log("Step "+ i + ": " + debugPath[i].x + ", " + debugPath[i].y);
+                Debug.Log("Step "+ i + ": " + debugPath[i].x + ", " + debugPath[i].y);*/
     }
 
     private void OnDrawGizmos()
     {
+        /*
         if (debugPath == null) return;
 
         float offset = tiles.cellSize.x / 2;
@@ -110,6 +111,7 @@ public class BattleManager : MonoBehaviour
             Vector3 lineEnd = new Vector3(debugPath[i + 1].x, debugPath[i + 1].y, 0) + offset3D;
             Gizmos.DrawLine(lineStart, lineEnd);
         }
+        */
     }
 
     // Update is called once per frame
