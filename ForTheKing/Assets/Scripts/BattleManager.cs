@@ -281,10 +281,20 @@ public class BattleManager : MonoBehaviour
                             script.endAction = Assassin.EndAction.AIM;
                             script.target = kingObj;
                         }
+                        else if(hit.collider.tag == "Unit")
+                        {
+
+                            script.endAction = Assassin.EndAction.AIM;
+                            script.target = hit.collider.gameObject;
+                        }
+                        else if(hit.collider.tag == "Civilian")
+                        {
+
+                            script.endAction = Assassin.EndAction.AIM;
+                            script.target = hit.collider.gameObject;
+                        }
 
                         //if wall, continue walking
-
-                        //if no wall, set up fire in direction of the king
                     }
 
                     Debug.Log("assassin is going to " + script.endAction.ToString());
@@ -1222,36 +1232,7 @@ public class BattleManager : MonoBehaviour
                 moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
 
                 //stab the person
-                script.target.GetComponent<SpriteRenderer>().enabled = false;
-
-                script.target.GetComponent<BoxCollider2D>().enabled = false;
-
-                //remove them from board
-                if (script.target.tag == "Unit")
-                {
-                    ControllableUnit control = script.target.GetComponent<ControllableUnit>();
-
-                    control.isAlive = false;
-
-                    board[gridSize - 1 - control.gridY][control.gridX] = passable;
-                }
-                else if (script.target.tag == "Civilian")
-                {
-                    Civilian civ = script.target.GetComponent<Civilian>();
-
-                    civ.isAlive = false;
-
-                    board[gridSize - 1 - civ.gridY][civ.gridX] = passable;
-                }
-                else if (script.target.tag == "King")
-                {
-                    King kingScript = script.target.GetComponent<King>();
-
-                    // kill king
-                    //TODO implement game over
-                    Debug.Log("The king is dead");
-                }
-                else Debug.LogError("assassin " + i + " has unidentified target! can't kill!");
+                killGameObject(script.target);
             }
             else if (script.endAction == Assassin.EndAction.AIM)
             {
@@ -1261,44 +1242,10 @@ public class BattleManager : MonoBehaviour
                 //aim bow
                 Debug.Log("fire!");
 
- 
                 //stab the person
-                script.target.GetComponent<SpriteRenderer>().enabled = false;
-
-                //remove them from board
-                if (script.target.tag == "Unit")
-                {
-                    ControllableUnit control = script.target.GetComponent<ControllableUnit>();
-
-                    control.isAlive = false;
-
-                    board[gridSize - 1 - control.gridY][control.gridX] = passable;
-                }
-                else if (script.target.tag == "Civilian")
-                {
-                    Civilian civ = script.target.GetComponent<Civilian>();
-
-                    civ.isAlive = false;
-
-                    board[gridSize - 1 - civ.gridY][civ.gridX] = passable;
-                }
-                else if (script.target.tag == "King")
-                {
-                    King kingScript = script.target.GetComponent<King>();
-
-                    // kill king
-                    //TODO implement game over
-                    Debug.Log("The king is dead");
-                }
-                else Debug.LogError("assassin " + i + " has unidentified target! can't kill!");
-
+                killGameObject(script.target);
+                
             }
-            //else if (script.endAction == Assassin.EndAction.FIRE)
-            //{
-                //fire bow towards direction of original aiming, killing who it hits
-
-            //    Debug.Log("fire!");
-            //}
             else if (script.endAction == Assassin.EndAction.IDLE)
             {
                 //just "walk" to end of path
@@ -1306,30 +1253,44 @@ public class BattleManager : MonoBehaviour
 
                 Debug.Log("to place wanted to go");
             }
-
-            //bool routeInterrupted = false;
-            //for(int j = 1; j < script.nextTurnPath.Length; j++)
-            //{
-            //    if (!isPassableAtTileSpace(script.nextTurnPath[j]))
-            //    {
-            //        //recalculate path/plan
-
-            //        routeInterrupted = true;
-            //    }
-
-            //}
-
-            //if(!routeInterrupted)
-            //{
-            //    moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
-            //}
-            //else
-            //{
-            //    Debug.LogWarning("TODO assassin route interrupted movement");
-            //}
         }
+    }
 
-        
+    /*
+     * will be erors if not passing in a killable character
+     */
+    void killGameObject(GameObject toKill)
+    {
+        toKill.GetComponent<SpriteRenderer>().enabled = false;
+
+        toKill.GetComponent<BoxCollider2D>().enabled = false;
+        //remove them from board
+        if (toKill.tag == "Unit")
+        {
+            ControllableUnit control = toKill.GetComponent<ControllableUnit>();
+
+            control.isAlive = false;
+
+            board[gridSize - 1 - control.gridY][control.gridX] = passable;
+        }
+        else if (toKill.tag == "Civilian")
+        {
+            Civilian civ = toKill.GetComponent<Civilian>();
+
+            civ.isAlive = false;
+
+            board[gridSize - 1 - civ.gridY][civ.gridX] = passable;
+        }
+        else if (toKill.tag == "King")
+        {
+            King kingScript = toKill.GetComponent<King>();
+
+            // kill king
+            //TODO implement game over
+            Debug.Log("The king is dead");
+        }
+        else Debug.LogError("assassin has unidentified target! can't kill!");
+
     }
 
     /*
