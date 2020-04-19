@@ -12,6 +12,7 @@ public class ControllableUnit : MonoBehaviour
 
     public bool hasMoved = false;
     public bool hasTakenAction = false;
+    public bool isAlive = true;
     public int unitID;
 
     public List<Vector2Int> moveablePositions;
@@ -59,6 +60,9 @@ public class ControllableUnit : MonoBehaviour
 
         BattleManager bmanager = FindObjectOfType<BattleManager>();
 
+        moveablePositions = new List<Vector2Int>(bmanager.passableInRadius(new Vector2Int(gridX - 5, gridY - 5), speed));
+
+        /*
         for(int i = -speed; i <= speed; i++)
         {
             for(int j = -speed; j <= speed; j++)
@@ -78,6 +82,7 @@ public class ControllableUnit : MonoBehaviour
                 }
             }
         }
+        */
 
         //Debug.Log("Found " + moveablePositions.Count + " spaces to move to");
     }

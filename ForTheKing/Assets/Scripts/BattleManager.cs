@@ -26,6 +26,7 @@ public class BattleManager : MonoBehaviour
     Vector3[][] unitPositions, assassinPositions, civilianPositions;
     int[][][] savedBoards;
     Vector2Int[][] unitGridSpaces, assassinGridSpaces, civilianGridSpaces;
+    bool[][] unitStatuses, assassinStatuses, civilianStatuses;
     int maxNumberOfTurns = 30;
     int turnNumber = 1;
     int empty = -1;
@@ -45,6 +46,9 @@ public class BattleManager : MonoBehaviour
 
     public Text cavalryText;
     public int turnsToSurvive;
+    private bool[] goldExists;
+    private Vector2Int[] goldGridPos;
+    private int civilianSpeed = 2;
 
     //Vector2Int[] debugPath;
 
@@ -59,6 +63,9 @@ public class BattleManager : MonoBehaviour
 
         board = new int[gridSize][];
 
+        goldExists = new bool[maxNumberOfTurns];
+        goldGridPos = new Vector2Int[maxNumberOfTurns];
+
         readTiles();
         controllableUnits = GameObject.FindGameObjectsWithTag("Unit");
         assassins = GameObject.FindGameObjectsWithTag("Assassin");
@@ -70,6 +77,9 @@ public class BattleManager : MonoBehaviour
         assassinGridSpaces = new Vector2Int[maxNumberOfTurns][];
         civilianGridSpaces = new Vector2Int[maxNumberOfTurns][];
         savedBoards = new int[maxNumberOfTurns][][];
+        unitStatuses = new bool[maxNumberOfTurns][];
+        assassinStatuses = new bool[maxNumberOfTurns][];
+        civilianStatuses = new bool[maxNumberOfTurns][];
 
         for(int i = 0; i < maxNumberOfTurns; i++)
         {
@@ -79,6 +89,9 @@ public class BattleManager : MonoBehaviour
             unitGridSpaces[i] = new Vector2Int[controllableUnits.Length];
             assassinGridSpaces[i] = new Vector2Int[assassins.Length];
             civilianGridSpaces[i] = new Vector2Int[civilians.Length];
+            unitStatuses[i] = new bool[controllableUnits.Length];
+            assassinStatuses[i] = new bool[assassins.Length];
+            civilianStatuses[i] = new bool[civilians.Length];
 
             savedBoards[i] = new int[gridSize][];
 
@@ -411,7 +424,9 @@ public class BattleManager : MonoBehaviour
 
     public void tossCoin(Vector2Int pos)
     {
-
+        goldGridPos[turnNumber] = new Vector2Int(pos.x, pos.y);
+        goldExists[turnNumber] = true;
+        //Enable/instantiate Gold prefab
     }
 
     public void taunt()
@@ -428,6 +443,11 @@ public class BattleManager : MonoBehaviour
     {
         Vector2 origin = new Vector2(start.transform.position.x, start.transform.position.y);
         Vector2 destination = new Vector2(dest.transform.position.x, dest.transform.position.y);
+        return Physics2D.Raycast(origin, destination - origin);
+    }
+
+    public RaycastHit2D lineOfSightPos(Vector2 origin, Vector2 destination)
+    {
         return Physics2D.Raycast(origin, destination - origin);
     }
 
@@ -450,6 +470,104 @@ public class BattleManager : MonoBehaviour
 
             this.parent = parent;
         }
+
+        public override bool Equals(object obj)
+        {
+            Node o = (Node)obj;
+            return o.x == x && o.y == y;
+        }
+    }
+
+    /*
+     * src is in tilespace, radius represents number of tiles away from src
+     */
+    public Vector2Int[] passableInRadius(Vector2Int src, int radius)
+    {
+        //perform depth first "search" away from src
+
+        Node start = new Node(null, src.x, src.y);
+
+        List<Node> open = new List<Node>();
+        List<Node> closed = new List<Node>();
+
+        open.Add(start);
+
+        while(open.Count > 0)
+        {
+            Node current_node = open[0];
+            open.RemoveAt(0);
+
+            closed.Add(current_node);
+
+            if (current_node.g > radius) continue;
+
+            //generate children for all 8 directions
+            //TODO if contained in open, check if smaller or greater value of g
+            Node upLeft = createChildIfValid(current_node, -1, 1);
+            if (upLeft != null && !open.Contains(upLeft) && !closed.Contains(upLeft))
+            {
+                upLeft.g = current_node.g + 1.5;
+                open.Add(upLeft);
+            }
+            
+            Node upMid = createChildIfValid(current_node, 0, 1);
+            if (upMid != null && !open.Contains(upMid) && !closed.Contains(upMid))
+            {
+                upMid.g = current_node.g + 1;
+                open.Add(upMid);
+            }
+
+            Node upRight = createChildIfValid(current_node, 1, 1);
+            if (upRight != null && !open.Contains(upRight) && !closed.Contains(upRight))
+            {
+                upRight.g = current_node.g + 1.5;
+                open.Add(upRight);
+            }
+            
+            Node left = createChildIfValid(current_node, -1, 0);
+            if (left != null && !open.Contains(left) && !closed.Contains(left))
+            {
+                left.g = current_node.g + 1;
+                open.Add(left);
+            }
+
+            Node right = createChildIfValid(current_node, 1, 0);
+            if (right != null && !open.Contains(right) && !closed.Contains(right))
+            {
+                right.g = current_node.g + 1; 
+                open.Add(right);
+            }
+
+            Node downLeft = createChildIfValid(current_node, -1, -1);
+            if (downLeft != null && !open.Contains(downLeft) && !closed.Contains(downLeft))
+            {
+                downLeft.g = current_node.g + 1.5;
+                open.Add(downLeft);
+            }
+
+            Node downMid = createChildIfValid(current_node, 0, -1);
+            if (downMid != null && !open.Contains(downMid) && !closed.Contains(downMid))
+            {
+                downMid.g = current_node.g + 1;
+                open.Add(downMid);
+            }
+
+            Node downRight = createChildIfValid(current_node, 1, -1);
+            if (downRight != null && !open.Contains(downRight) && !closed.Contains(downRight))
+            {
+                downRight.g = current_node.g + 1.5;
+                open.Add(downRight);
+            }
+        }
+
+        Vector2Int[] pos = new Vector2Int[closed.Count];
+        for(int i = 0; i < pos.Length; i++)
+        {
+            if (closed[i].g > radius) continue;
+            pos[i] = new Vector2Int(closed[i].x, closed[i].y);
+        }
+
+        return pos;
     }
 
     /*
@@ -730,7 +848,9 @@ public class BattleManager : MonoBehaviour
 
         for (int i = 0; i < controllableUnits.Length; i++)
         {
-            
+            bool isAlive = controllableUnits[i].GetComponent<ControllableUnit>().isAlive;
+            unitStatuses[id][i] = isAlive;
+
             int tempX = controllableUnits[i].GetComponent<ControllableUnit>().gridX;
             int tempY = controllableUnits[i].GetComponent<ControllableUnit>().gridY;
             unitPositions[id][i] = tiles.CellToWorld(new Vector3Int(tempX - gridSize / 2, tempY - gridSize / 2, 0)) + offset;
@@ -739,6 +859,9 @@ public class BattleManager : MonoBehaviour
 
         for (int i = 0; i < assassins.Length; i++)
         {
+            bool isAlive = assassins[i].GetComponent<Assassin>().isAlive;
+            assassinStatuses[id][i] = isAlive;
+
             int tempX = assassins[i].GetComponent<Assassin>().gridX;
             int tempY = assassins[i].GetComponent<Assassin>().gridY;
             assassinPositions[id][i] = tiles.CellToWorld(new Vector3Int(tempX - gridSize / 2, tempY - gridSize / 2, 0)) + offset;
@@ -747,6 +870,9 @@ public class BattleManager : MonoBehaviour
 
         for(int i = 0; i < civilians.Length; i++)
         {
+            bool isAlive = civilians[i].GetComponent<Civilian>().isAlive;
+            civilianStatuses[id][i] = isAlive;
+
             int tempX = civilians[i].GetComponent<Civilian>().gridX;
             int tempY = civilians[i].GetComponent<Civilian>().gridY;
             civilianPositions[id][i] = tiles.CellToWorld(new Vector3Int(tempX - gridSize / 2, tempY - gridSize / 2, 0)) + offset;
@@ -760,6 +886,8 @@ public class BattleManager : MonoBehaviour
                 savedBoards[id][i][j] = board[i][j];
             }
         }
+
+
     }
 
     public void loadBoard(int id)
@@ -778,6 +906,7 @@ public class BattleManager : MonoBehaviour
         {
             controllableUnits[i].transform.position = unitPositions[id][i];
             Vector2Int temp = unitGridSpaces[id][i];
+            controllableUnits[i].GetComponent<ControllableUnit>().isAlive = unitStatuses[id][i];
             controllableUnits[i].GetComponent<ControllableUnit>().gridX = temp.x;
             controllableUnits[i].GetComponent<ControllableUnit>().gridY = temp.y;
         }
@@ -786,6 +915,7 @@ public class BattleManager : MonoBehaviour
         {
             assassins[i].transform.position = assassinPositions[id][i];
             Vector2Int temp2 = assassinGridSpaces[id][i];
+            assassins[i].GetComponent<Assassin>().isAlive = assassinStatuses[id][i];
             assassins[i].GetComponent<Assassin>().gridX = temp2.x;
             assassins[i].GetComponent<Assassin>().gridY = temp2.y;
         }
@@ -794,6 +924,7 @@ public class BattleManager : MonoBehaviour
         {
             civilians[i].transform.position = civilianPositions[id][i];
             Vector2Int temp3 = civilianGridSpaces[id][i];
+            civilians[i].GetComponent<Civilian>().isAlive = civilianStatuses[id][i];
             civilians[i].GetComponent<Civilian>().gridX = temp3.x;
             civilians[i].GetComponent<Civilian>().gridY = temp3.y;
         }
@@ -803,9 +934,123 @@ public class BattleManager : MonoBehaviour
 
     void civilianTurn()
     {
+        for(int i = 0; i < civilians.Length; i++)
+        {
+            if (!civilians[i].GetComponent<Civilian>().isAlive) continue;
 
+            if(goldExists[turnNumber])
+            {
+                //Path to gold-- Doesn't matter if you can't see it.
+                int origX = civilians[i].GetComponent<Civilian>().gridX;
+                int origY = civilians[i].GetComponent<Civilian>().gridY;
+
+                Vector2Int[] pathToGold = findPathTo(new Vector2Int(origX, origY), goldGridPos[turnNumber]);
+                
+                if(pathToGold.Length > 1)
+                {
+                    //Need to try to move closer to gold.
+                }
+                else
+                {
+                    //Already adjacent to gold, no need to move.
+                }
+            }
+            else
+            {
+                bool foundAssassin = false;
+                int assassinID = -1;
+
+                for(int j = 0; j < assassins.Length; j++)
+                {
+                    if (!assassins[i].GetComponent<Assassin>().isAlive) continue;
+                    RaycastHit2D hit = lineOfSight(civilians[i], assassins[j]);
+                    
+                    if(hit.collider.CompareTag("Assassin"))
+                    {
+                        foundAssassin = true;
+                        assassinID = j;
+                        break;
+                    }
+                }
+                
+                if(foundAssassin)
+                {
+                    //Found an assassin! Try to break line of sight!
+
+                    List<Vector2Int> possibleSpaces = new List<Vector2Int>();
+                    int origX = civilians[i].GetComponent<Civilian>().gridX;
+                    int origY = civilians[i].GetComponent<Civilian>().gridY;
+
+                    possibleSpaces.Add(new Vector2Int(origX+1, origY));
+                    possibleSpaces.Add(new Vector2Int(origX, origY+1));
+                    possibleSpaces.Add(new Vector2Int(origX+1, origY+1));
+                    possibleSpaces.Add(new Vector2Int(origX-1, origY));
+                    possibleSpaces.Add(new Vector2Int(origX, origY-1));
+                    possibleSpaces.Add(new Vector2Int(origX-1, origY-1));
+                    possibleSpaces.Add(new Vector2Int(origX-1, origY+1));
+                    possibleSpaces.Add(new Vector2Int(origX+1, origY-1));
+                    Vector2Int[] possibleArray = possibleSpaces.ToArray();
+
+                    Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
+                    Vector2Int assassinGridPos = new Vector2Int(assassins[assassinID].GetComponent<Assassin>().gridX, assassins[assassinID].GetComponent<Assassin>().gridY);
+                    Vector3 assassinWorldPos3D = tiles.CellToWorld(new Vector3Int(assassinGridPos.x - gridSize / 2, assassinGridPos.y - gridSize / 2, 0)) + offset;
+                    Vector2 assassinWorldPos = new Vector2(assassinWorldPos3D.x, assassinWorldPos3D.y);
+
+                    for (int k = 0; k < possibleArray.Length; k++)
+                    {
+                        Vector2Int temp = possibleArray[k];
+                        Vector3 tempWorldPos3D = tiles.CellToWorld(new Vector3Int(temp.x - gridSize / 2, temp.y - gridSize / 2, 0)) + offset;
+                        Vector2 rayOrigin = new Vector2(tempWorldPos3D.x, tempWorldPos3D.y);
+
+                        RaycastHit2D hit2 = lineOfSightPos(rayOrigin, assassinWorldPos);
+
+                        if(!hit2.collider.CompareTag("Assassin"))
+                        {
+                            //Broke line of sight! Move to new space!
+                            moveCivilian(civilians[i], possibleArray[k]);
+                        }
+                    }
+                }
+                else
+                {
+                    //Do nothing...
+                }
+            }
+        }
+
+        //If any civilian is adjacent to the gold, remove the gold.
+        for(int i = 0; i < civilians.Length; i++)
+        {
+            if (!civilians[i].GetComponent<Civilian>().isAlive) continue;
+            int civX = civilians[i].GetComponent<Civilian>().gridX;
+            int civY = civilians[i].GetComponent<Civilian>().gridY;
+
+            if(Mathf.Abs(civX - goldGridPos[turnNumber].x) <= 1 && Mathf.Abs(civY - goldGridPos[turnNumber].y) <= 1)
+            {
+                //Civilian is adjacent to the gold!
+                goldExists[turnNumber] = false;
+                goldGridPos[turnNumber] = new Vector2Int();
+                //TODO: Disable/remove Gold gameobject.
+                break;
+            }
+        }
     }
-    
+
+    void moveCivilian(GameObject civ, Vector2Int newPos)
+    {
+        int oldGridX = civ.GetComponent<Civilian>().gridX;
+        int oldGridY = civ.GetComponent<Civilian>().gridY;
+
+        board[(gridSize - 1) - oldGridY][oldGridX] = passable;
+        board[(gridSize - 1) - newPos.y][newPos.x] = civilian;
+
+        civ.GetComponent<Civilian>().gridX = newPos.x;
+        civ.GetComponent<Civilian>().gridY = newPos.y;
+
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
+        civ.transform.position = tiles.CellToWorld(new Vector3Int(newPos.x - gridSize / 2, newPos.y - gridSize / 2, 0)) + offset;
+    }
+
     void assassinTurn()
     {
         //have assassin execute their turn

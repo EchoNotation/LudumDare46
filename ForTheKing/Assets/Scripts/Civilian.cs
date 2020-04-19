@@ -7,6 +7,7 @@ public class Civilian : MonoBehaviour
 {
     public int gridX = 0;
     public int gridY = 0;
+    public bool isAlive = true;
 
     // Start is called before the first frame update
     void Start()

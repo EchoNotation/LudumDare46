@@ -12,6 +12,7 @@ TagManager:
   - MoveMarker
   - AssassinMoveMarker
   - Audio
+  - Gold
   layers:
   - Default
   - TransparentFX
