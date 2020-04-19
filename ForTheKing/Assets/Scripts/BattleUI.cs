@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class BattleUI : MonoBehaviour
 {
     public GameObject currentlySelected;
     public Canvas optionCanvas;
+
+    public GameObject movementMarker;
 
     bool hasSelection = false;
 
@@ -62,10 +65,43 @@ public class BattleUI : MonoBehaviour
 
         if (currentlySelected.GetComponent<ControllableUnit>().hasMoved) return;
 
+        //if already moving, cancel moving
+        if (currentAction == Action.MOVE)
+        {
+            currentAction = Action.NONE;
+            awaitingInput = false;
+            removeMoveMarkers();
+
+            return;
+        }
+
         awaitingInput = true;
         currentAction = Action.MOVE;
 
         currentlySelected.GetComponent<ControllableUnit>().updateMoveablePositions();
+        Vector2Int[] moves = currentlySelected.GetComponent<ControllableUnit>().moveablePositions.ToArray();
+
+        for(int i = 0; i < moves.Length; i++)
+        {
+            createMarkerAtTile(moves[i]);
+        }
+    }
+
+    private void createMarkerAtTile(Vector2Int tilePos)
+    {
+        float offset = FindObjectOfType<Tilemap>().cellSize.x / 2;
+        Vector3 worldPos = new Vector3(tilePos.x + offset, tilePos.y + offset);
+        Instantiate(movementMarker, worldPos, Quaternion.identity);
+    }
+
+    private void removeMoveMarkers()
+    {
+        GameObject[] markers = GameObject.FindGameObjectsWithTag("MoveMarker");
+        for(int i = 0; i < markers.Length; i++)
+        {
+            Destroy(markers[i]);
+        }
+        
     }
 
     public void onShoveButton()
@@ -143,6 +179,8 @@ public class BattleUI : MonoBehaviour
                 battleManager.moveToPosition(currentlySelected, new Vector2(x, y));
 
                 //currentlySelected.GetComponent<ControllableUnit>().hasMoved = true;
+
+                removeMoveMarkers();
 
                 unSelect();
             }            
@@ -273,6 +311,7 @@ public class BattleUI : MonoBehaviour
 
     public void setSelected(GameObject select)
     {
+        removeMoveMarkers();
         currentlySelected = select;
         hasSelection = true;
         awaitingInput = false;

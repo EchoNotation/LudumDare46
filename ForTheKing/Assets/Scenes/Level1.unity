@@ -226,7 +226,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.6825}
   m_AnchorMax: {x: 0.20618707, y: 0.82250005}
-  m_AnchoredPosition: {x: 1.5899963, y: -1}
+  m_AnchoredPosition: {x: 1.5899658, y: -1}
   m_SizeDelta: {x: 1.1878662, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &88683510
@@ -979,6 +979,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentlySelected: {fileID: 0}
   optionCanvas: {fileID: 637214437}
+  movementMarker: {fileID: 2180988831928738971, guid: 4c5b102902336c441942b396e835c387,
+    type: 3}
 --- !u!1 &529396499
 GameObject:
   m_ObjectHideFlags: 0

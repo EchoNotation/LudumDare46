@@ -9,6 +9,7 @@ TagManager:
   - King
   - Tilemap
   - Civilian
+  - MoveMarker
   layers:
   - Default
   - TransparentFX
@@ -45,4 +46,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: InGameUI
+    uniqueID: 2424133597
     locked: 0
