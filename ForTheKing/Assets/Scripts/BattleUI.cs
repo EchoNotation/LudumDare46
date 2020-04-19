@@ -189,6 +189,12 @@ public class BattleUI : MonoBehaviour
 
         if(awaitingInput)
         {
+            if(currentAction == Action.MOVE)
+            {
+                removeMoveMarkers();
+                unSelect();
+            }
+
             //do the thing
             if(currentAction == Action.SHOVE)
             {
@@ -312,6 +318,7 @@ public class BattleUI : MonoBehaviour
     public void unSelect()
     {
         currentlySelected.GetComponent<ControllableUnit>().moveablePositions.Clear();
+        removeMoveMarkers();
         currentlySelected = null;
         hasSelection = false;
         currentAction = Action.NONE;
