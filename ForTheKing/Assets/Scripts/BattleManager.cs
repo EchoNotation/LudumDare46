@@ -1127,7 +1127,7 @@ public class BattleManager : MonoBehaviour
     {
         newLocation.x += 5;
         newLocation.y += 5;
-        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -0.5f);
         Vector3 goldWorldPos = tiles.CellToWorld(new Vector3Int(newLocation.x - gridSize / 2, newLocation.y - gridSize / 2, 0)) + offset;
         gold.transform.position = goldWorldPos;
     }
