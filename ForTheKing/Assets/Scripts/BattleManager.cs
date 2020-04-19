@@ -141,6 +141,21 @@ public class BattleManager : MonoBehaviour
             Gizmos.DrawLine(lineStart, lineEnd);
         }
         */
+
+        for(int i = 0; i < assassins.Length; i++)
+        {
+            Assassin script = assassins[i].GetComponent<Assassin>();
+            if (script.endAction == Assassin.EndAction.AIM)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawLine(assassins[i].transform.position, script.target.transform.position);
+            }
+            else if (script.endAction == Assassin.EndAction.AIM)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(assassins[i].transform.position, script.target.transform.position);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -261,7 +276,13 @@ public class BattleManager : MonoBehaviour
                     if(script.endAction != Assassin.EndAction.STAB && Vector2Int.Distance(currentPath[i], kingPos) < script.range)
                     {
                         //if good distance, check sightline for wall
-
+                        RaycastHit2D hit = lineOfSight(assassins[i], kingObj);
+                        if(hit.collider.tag == "King")
+                        {
+                            //aim
+                            script.endAction = Assassin.EndAction.AIM;
+                            script.target = kingObj;
+                        }
 
                         //if wall, continue walking
 
@@ -723,7 +744,7 @@ public class BattleManager : MonoBehaviour
 
                 if(children[i].h < range && range != -1)
                 {
-                    return constructPath(start, current_node);
+                    return constructPath(start, children[i]);
                 }
 
                 bool wasOpen = false;
