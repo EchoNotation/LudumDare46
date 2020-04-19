@@ -26,14 +26,6 @@ public class Assassin : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //RaycastHit2D hit = shoot(king);
-        //Debug.Log(hit.collider.tag);
-    }
-
-    public RaycastHit2D shoot(GameObject victim)
-    {
-        Vector2 origin = new Vector2(transform.position.x, transform.position.y);
-        Vector2 destination = new Vector2(victim.transform.position.x, victim.transform.position.y);
-        return Physics2D.Raycast(origin, destination - origin);
+        
     }
 }

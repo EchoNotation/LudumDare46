@@ -276,7 +276,23 @@ public class BattleManager : MonoBehaviour
 
     }
 
+    public void taunt()
+    {
+
+    }
+
+    public void block()
+    {
+
+    }
     
+    public RaycastHit2D lineOfSight(GameObject start, GameObject dest)
+    {
+        Vector2 origin = new Vector2(start.transform.position.x, start.transform.position.y);
+        Vector2 destination = new Vector2(dest.transform.position.x, dest.transform.position.y);
+        return Physics2D.Raycast(origin, destination - origin);
+    }
+
     //PATHFINDING
     class Node
     {
