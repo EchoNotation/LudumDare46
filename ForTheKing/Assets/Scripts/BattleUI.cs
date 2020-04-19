@@ -101,7 +101,7 @@ public class BattleUI : MonoBehaviour
         Instantiate(marker, worldPos, Quaternion.identity);
     }
 
-    private void removeMoveMarkers(string tag)
+    public void removeMoveMarkers(string tag)
     {
         GameObject[] markers = GameObject.FindGameObjectsWithTag(tag);
         for(int i = 0; i < markers.Length; i++)

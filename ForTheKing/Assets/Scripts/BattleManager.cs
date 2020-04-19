@@ -136,6 +136,8 @@ public class BattleManager : MonoBehaviour
 
     void predictAssassinMove()
     {
+        FindObjectOfType<BattleUI>().removeMoveMarkers("AssassinMoveMarker");
+
         Vector2Int kingPos = new Vector2Int(FindObjectOfType<King>().gridX - gridSize/2, FindObjectOfType<King>().gridY - gridSize/2 + 1);
         for (int i = 0; i < assassins.Length; i++)
         {
@@ -153,6 +155,8 @@ public class BattleManager : MonoBehaviour
                 {
                     currentPath[j] = fullPath[j];
                 }
+
+                script.nextTurnPath = currentPath;
                 
                 for (int j = 1; j < currentPath.Length; j++)
                 {
@@ -526,6 +530,8 @@ public class BattleManager : MonoBehaviour
 
         turnNumber++;
         saveBoard(turnNumber);
+
+        predictAssassinMove();
     }
 
     public void rewind()
@@ -631,8 +637,73 @@ public class BattleManager : MonoBehaviour
     
     void assassinTurn()
     {
+        //have assassin move on their path if it is still uninterrupted
+        for(int i = 0; i < assassins.Length; i++)
+        {
+            Assassin script = assassins[i].GetComponent<Assassin>();
+
+            bool routeInterrupted = false;
+            for(int j = 1; j < script.nextTurnPath.Length; j++)
+            {
+                if (!isPassableAtTileSpace(script.nextTurnPath[j]))
+                {
+                    //recalculate path/plan
+
+                    routeInterrupted = true;
+                }
+
+            }
+
+            if(!routeInterrupted)
+            {
+                moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
+            }
+            else
+            {
+                Debug.LogWarning("TODO assassin route interrupted movement");
+            }
+        }
 
         
+    }
+
+    /*
+     * pos is in tilespace
+     */
+    public void moveAssassin(GameObject assassin, Vector2Int pos)
+    {
+        //assassin script
+        Assassin script = assassin.GetComponent<Assassin>();
+
+        //get old position
+        int oldGridX = script.gridX;
+        int oldGridY = script.gridY;
+
+        //update gridX, gridY
+        script.gridX = pos.x + gridSize/2;
+        script.gridY = pos.y + gridSize/2;
+
+        //move prefab to correct location
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
+        assassin.transform.position = tiles.CellToWorld(new Vector3Int(pos.x, pos.y, 0)) + offset;
+
+        //remove old space on  board
+        board[gridSize - 1 - (pos.y + gridSize/2)][pos.x + gridSize/2] = passable;
+
+
+        //put new space on board
+        board[gridSize - 1 - (pos.y + gridSize/2)][pos.x + gridSize/2] = this.assassin;
+    }
+
+    /*
+     * pos is in tilespace
+     */
+    public bool isPassableAtTileSpace(Vector2Int pos)
+    {
+        int tile = board[gridSize - 1 - (pos.y + gridSize/2)][pos.x + gridSize/2];
+
+        return tile == passable;
+
     }
 
     void readTiles()
