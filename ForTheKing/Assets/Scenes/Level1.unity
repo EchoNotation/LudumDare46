@@ -947,41 +947,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a4f9735115c20f499395ae469984a83, type: 3}
---- !u!1 &481920579 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2928117637307730891, guid: 42b9a37b5c98b374cb637204aacca756,
-    type: 3}
-  m_PrefabInstance: {fileID: 628935068}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &481920580 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
     type: 3}
   m_PrefabInstance: {fileID: 628935068}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 481920579}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3dff7f7a8fc9e514ea4c6bfb1c54268f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &481920582
+--- !u!114 &481920582 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 481920582, guid: 42b9a37b5c98b374cb637204aacca756,
+    type: 3}
+  m_PrefabInstance: {fileID: 628935068}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 481920579}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 546affb49e9224748a1d557a07953baa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentlySelected: {fileID: 0}
-  optionCanvas: {fileID: 637214437}
-  movementMarker: {fileID: 2180988831928738971, guid: 4c5b102902336c441942b396e835c387,
-    type: 3}
-  debugUnlimitedMovement: 0
 --- !u!1 &529396499
 GameObject:
   m_ObjectHideFlags: 0
@@ -1149,6 +1138,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 481920582, guid: 42b9a37b5c98b374cb637204aacca756, type: 3}
+      propertyPath: optionCanvas
+      value: 
+      objectReference: {fileID: 637214437}
+    - target: {fileID: 481920582, guid: 42b9a37b5c98b374cb637204aacca756, type: 3}
+      propertyPath: nextTurnButton
+      value: 
+      objectReference: {fileID: 1874636541}
     - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
       propertyPath: tiles
@@ -1156,25 +1153,9 @@ PrefabInstance:
       objectReference: {fileID: 1184917504}
     - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
-      propertyPath: calvaryText
-      value: 
-      objectReference: {fileID: 547771272}
-    - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
-        type: 3}
-      propertyPath: turnsToSurvive
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
-        type: 3}
       propertyPath: cavalryText
       value: 
       objectReference: {fileID: 547771272}
-    - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
-        type: 3}
-      propertyPath: assassinMarker
-      value: 
-      objectReference: {fileID: 2180988831928738971, guid: 976df9b3579d3d549976b70027e8c0cc,
-        type: 3}
     - target: {fileID: 2928117637307730891, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
       propertyPath: m_Name

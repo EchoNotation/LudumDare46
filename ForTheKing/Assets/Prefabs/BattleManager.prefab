@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3401161112455862827}
   - component: {fileID: 161150808904282777}
+  - component: {fileID: 481920582}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -44,3 +45,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tiles: {fileID: 0}
+  passable: 0
+  gridSize: 10
+  assassinMarker: {fileID: 2180988831928738971, guid: 976df9b3579d3d549976b70027e8c0cc,
+    type: 3}
+  cavalryText: {fileID: 0}
+  turnsToSurvive: 4
+  goldExists: 
+--- !u!114 &481920582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2928117637307730891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 546affb49e9224748a1d557a07953baa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentlySelected: {fileID: 0}
+  optionCanvas: {fileID: 0}
+  movementMarker: {fileID: 2180988831928738971, guid: 4c5b102902336c441942b396e835c387,
+    type: 3}
+  nextTurnButton: {fileID: 0}
+  debugUnlimitedMovement: 0
