@@ -18,6 +18,9 @@ public class BattleUI : MonoBehaviour
 
     BattleManager battleManager;
 
+    [SerializeField]
+    private bool debugUnlimitedMovement = false;
+
     enum Action {
         NONE,
         MOVE,
@@ -180,7 +183,8 @@ public class BattleUI : MonoBehaviour
                 //forward to battle manager
                 battleManager.moveToPosition(currentlySelected, new Vector2(x, y));
 
-                currentlySelected.GetComponent<ControllableUnit>().hasMoved = true;
+                if(!debugUnlimitedMovement)
+                    currentlySelected.GetComponent<ControllableUnit>().hasMoved = true;
 
                 removeMoveMarkers();
 
