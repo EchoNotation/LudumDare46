@@ -128,6 +128,6 @@ MonoBehaviour:
   isAlive: 1
   target: {fileID: 0}
   speed: 2
-  range: 3
+  range: 5
   desiredPath: []
   nextTurnPath: []
