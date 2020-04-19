@@ -520,6 +520,7 @@ public class BattleManager : MonoBehaviour
         if(turnsToSurvive <= 0)
         {
             //Victory!
+            GameObject.Find("SceneManager").GetComponent<SceneController>().LoadScene("Victory");
         }
         else
         {
