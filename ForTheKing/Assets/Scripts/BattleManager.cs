@@ -541,12 +541,33 @@ public class BattleManager : MonoBehaviour
         loadBoard(turnNumber);
         turnsToSurvive++;
         cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
+
+        for(int i = 0; i < assassins.Length; i++)
+        {
+            assassins[i].GetComponent<Assassin>().desiredPath = null;
+            assassins[i].GetComponent<Assassin>().nextTurnPath = null;
+            FindObjectOfType<BattleUI>().removeMoveMarkers("AssassinMoveMarker");
+
+        }
+
+        predictAssassinMove();
+
     }
 
     public void restartTurn()
     {
         resetActions();
         loadBoard(turnNumber);
+
+        for(int i = 0; i < assassins.Length; i++)
+        {
+            assassins[i].GetComponent<Assassin>().desiredPath = null;
+            assassins[i].GetComponent<Assassin>().nextTurnPath = null;
+            FindObjectOfType<BattleUI>().removeMoveMarkers("AssassinMoveMarker");
+
+        }
+        predictAssassinMove();
+
     }
 
 
@@ -814,6 +835,7 @@ public class BattleManager : MonoBehaviour
             controllableUnits[i].GetComponent<ControllableUnit>().hasMoved = false;
             controllableUnits[i].GetComponent<ControllableUnit>().hasTakenAction = false;
         }
+
     }
 
     void printBoard()
