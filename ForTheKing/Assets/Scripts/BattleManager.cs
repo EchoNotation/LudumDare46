@@ -160,7 +160,10 @@ public class BattleManager : MonoBehaviour
         {
             Assassin script = assassins[i].GetComponent<Assassin>();
             Vector2Int pos = new Vector2Int(script.gridX - gridSize/2, script.gridY - gridSize/2);
-            Vector2Int[] fullPath = findPathTo(pos, kingPos);
+            Vector2Int[] fullPath = findPathClosest(script.range, pos, kingPos);
+
+            script.target = null;
+            script.endAction = Assassin.EndAction.IDLE;
 
             if (fullPath != null)
             {
@@ -247,7 +250,6 @@ public class BattleManager : MonoBehaviour
                     //check stab down
                     if(isStabbable(currentPath[j] + new Vector2Int(0,-1)))
                     {
-
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(0, -1));
                         //excange for "stab marker"
@@ -266,6 +268,8 @@ public class BattleManager : MonoBehaviour
                         //if no wall, set up fire in direction of the king
                     }
 
+                    Debug.Log("assassin is going to " + script.endAction.ToString());
+
                     battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
                 }
 
@@ -282,7 +286,7 @@ public class BattleManager : MonoBehaviour
     private bool isStabbable(Vector2Int pos)
     {
         int tile = getTileAtSpace(pos);
-        return tile == knight || tile == king || tile == civilian;
+        return tile == knight || tile == king || tile == civilian || tile == jester || tile == noble;
     }
 
     /*
@@ -294,6 +298,10 @@ public class BattleManager : MonoBehaviour
 
         int gridX = pos.x + 5;
         int gridY = pos.y + 5;
+
+        //check if position of the king matches
+        King kingSc = kingObj.GetComponent<King>();
+        if (kingSc.gridX == gridX && kingSc.gridY == gridY) return kingObj;
 
         //loop through units list and see if any match position
         for(int i = 0; i < controllableUnits.Length; i++)
@@ -553,7 +561,7 @@ public class BattleManager : MonoBehaviour
 
             for(int i = 0; i < children.Count; i++)
             {
-                bool skip= false;
+                bool skip = false;
 
                 children[i].g = current_node.g + 1;
 
@@ -635,6 +643,7 @@ public class BattleManager : MonoBehaviour
             Node current_node = open[0];
             int currentIdx = 0;
 
+            //search for node closest to destination
             for(int i = 0; i < open.Count; i++)
             {
                 if(open[i].f < current_node.f)
@@ -644,6 +653,7 @@ public class BattleManager : MonoBehaviour
                 }
             }
 
+            //remove that
             open.RemoveAt(currentIdx);
             closed.Add(current_node);
 
@@ -659,7 +669,7 @@ public class BattleManager : MonoBehaviour
             if (upLeft != null)
             {
                 children.Add(upLeft);
-                upLeft.g += 1.5;
+                upLeft.g += 0.5;
             }
             
             Node upMid = createChildIfValid(current_node, 0, 1);
@@ -668,7 +678,7 @@ public class BattleManager : MonoBehaviour
             Node upRight = createChildIfValid(current_node, 1, 1);
             if (upRight != null)
             {
-                upRight.g += 1.5;
+                upRight.g += 0.5;
                 children.Add(upRight);
             }
             
@@ -681,7 +691,7 @@ public class BattleManager : MonoBehaviour
             Node downLeft = createChildIfValid(current_node, -1, -1);
             if (downLeft != null)
             {
-                downLeft.g += 1.5;
+                downLeft.g += 0.5;
                 children.Add(downLeft);
             }
 
@@ -691,20 +701,16 @@ public class BattleManager : MonoBehaviour
             Node downRight = createChildIfValid(current_node, 1, -1);
             if (downRight != null)
             {
-                downRight.g += 1.5;
+                downRight.g += 0.5;
                 children.Add(downRight);
             }
 
             //loop through children
             for(int i = 0; i < children.Count; i++)
             {
-                //don't use if child is already closed
-                for(int j = 0; j < closed.Count; j++)
+                if(closed.Contains(children[i]))
                 {
-                    if(closed[j].x == children[i].x && closed[j].y == children[i].y)
-                    {
-                        continue;
-                    }
+                    continue;
                 }
 
                 //update values
@@ -717,11 +723,23 @@ public class BattleManager : MonoBehaviour
                     return constructPath(start, current_node);
                 }
 
+                bool wasOpen = false;
+
                 //add child to open list if not on the list already with more efficient path
                 for(int j = 0; j < open.Count; j++)
                 {
-                    if (children[i].x == open[j].x && children[i].y == open[j].y && children[i].g > open[j].g) continue;
+                    if(children[i].Equals(open[j]))
+                    {
+                        if(children[i].g < open[j].g)
+                        {
+                            open[j].g = children[i].g;
+                        }
+                        wasOpen = true;
+                        break;
+                    }
                 }
+
+                if (wasOpen) continue;
 
                 open.Add(children[i]);
             }
@@ -771,7 +789,8 @@ public class BattleManager : MonoBehaviour
 
         //check bounds of destination
 
-        int boardSquareID = board[Mathf.Abs(dest.y - 4)][dest.x + gridSize/2];
+        //int boardSquareID = board[Mathf.Abs(dest.y - 4)][dest.x + gridSize/2];
+        int boardSquareID = board[gridSize - 1 - (dest.y + 5)][dest.x + 5];
         if(boardSquareID != passable)
         {
             //Debug.Log("Can't Pathfind: end is not passable");
@@ -793,7 +812,7 @@ public class BattleManager : MonoBehaviour
         }
 
         //check valid square to move to
-        int boardSquareID = board[Mathf.Abs(child.y - 4)][child.x + gridSize/2];
+        int boardSquareID = board[gridSize - 1 - (child.y + 5)][child.x + 5];
         if(boardSquareID != passable)
         {
             return null;
@@ -1101,8 +1120,7 @@ public class BattleManager : MonoBehaviour
 
                 //stab the person
                 script.target.GetComponent<SpriteRenderer>().enabled = false;
-                //disable isAlive flag on them                
-                //TODO
+
                 //remove them from board
                 if (script.target.tag == "Unit")
                 {
@@ -1128,16 +1146,21 @@ public class BattleManager : MonoBehaviour
                 moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
 
                 //aim bow
+                Debug.Log("aim!");
 
             }
             else if (script.endAction == Assassin.EndAction.FIRE)
             {
                 //fire bow towards direction of original aiming, killing who it hits
+
+                Debug.Log("fire!");
             }
             else if (script.endAction == Assassin.EndAction.IDLE)
             {
                 //just "walk" to end of path
                 moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
+
+                Debug.Log("to place wanted to go");
             }
 
             //bool routeInterrupted = false;
