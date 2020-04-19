@@ -350,6 +350,104 @@ public class BattleManager : MonoBehaviour
 
             this.parent = parent;
         }
+
+        public override bool Equals(object obj)
+        {
+            Node o = (Node)obj;
+            return o.x == x && o.y == y;
+        }
+    }
+
+    /*
+     * src is in tilespace, radius represents number of tiles away from src
+     */
+    public Vector2Int[] passableInRadius(Vector2Int src, int radius)
+    {
+        //perform depth first "search" away from src
+
+        Node start = new Node(null, src.x, src.y);
+
+        List<Node> open = new List<Node>();
+        List<Node> closed = new List<Node>();
+
+        open.Add(start);
+
+        while(open.Count > 0)
+        {
+            Node current_node = open[0];
+            open.RemoveAt(0);
+
+            closed.Add(current_node);
+
+            if (current_node.g > radius) continue;
+
+            //generate children for all 8 directions
+            //TODO if contained in open, check if smaller or greater value of g
+            Node upLeft = createChildIfValid(current_node, -1, 1);
+            if (upLeft != null && !open.Contains(upLeft) && !closed.Contains(upLeft))
+            {
+                upLeft.g = current_node.g + 1.5;
+                open.Add(upLeft);
+            }
+            
+            Node upMid = createChildIfValid(current_node, 0, 1);
+            if (upMid != null && !open.Contains(upMid) && !closed.Contains(upMid))
+            {
+                upMid.g = current_node.g + 1;
+                open.Add(upMid);
+            }
+
+            Node upRight = createChildIfValid(current_node, 1, 1);
+            if (upRight != null && !open.Contains(upRight) && !closed.Contains(upRight))
+            {
+                upRight.g = current_node.g + 1.5;
+                open.Add(upRight);
+            }
+            
+            Node left = createChildIfValid(current_node, -1, 0);
+            if (left != null && !open.Contains(left) && !closed.Contains(left))
+            {
+                left.g = current_node.g + 1;
+                open.Add(left);
+            }
+
+            Node right = createChildIfValid(current_node, 1, 0);
+            if (right != null && !open.Contains(right) && !closed.Contains(right))
+            {
+                right.g = current_node.g + 1; 
+                open.Add(right);
+            }
+
+            Node downLeft = createChildIfValid(current_node, -1, -1);
+            if (downLeft != null && !open.Contains(downLeft) && !closed.Contains(downLeft))
+            {
+                downLeft.g = current_node.g + 1.5;
+                open.Add(downLeft);
+            }
+
+            Node downMid = createChildIfValid(current_node, 0, -1);
+            if (downMid != null && !open.Contains(downMid) && !closed.Contains(downMid))
+            {
+                downMid.g = current_node.g + 1;
+                open.Add(downMid);
+            }
+
+            Node downRight = createChildIfValid(current_node, 1, -1);
+            if (downRight != null && !open.Contains(downRight) && !closed.Contains(downRight))
+            {
+                downRight.g = current_node.g + 1.5;
+                open.Add(downRight);
+            }
+        }
+
+        Vector2Int[] pos = new Vector2Int[closed.Count];
+        for(int i = 0; i < pos.Length; i++)
+        {
+            if (closed[i].g > radius) continue;
+            pos[i] = new Vector2Int(closed[i].x, closed[i].y);
+        }
+
+        return pos;
     }
 
     /*
