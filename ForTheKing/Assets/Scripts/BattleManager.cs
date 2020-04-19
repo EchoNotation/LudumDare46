@@ -37,7 +37,7 @@ public class BattleManager : MonoBehaviour
     int noble = 5;
     int civilian = 6;
     int assassin = 7;
-    int gridSize = 10;
+    public int gridSize = 10;
 
     public Text cavalryText;
     public int turnsToSurvive;
@@ -136,7 +136,7 @@ public class BattleManager : MonoBehaviour
 
         //Debug.Log("oldX " + oldX + " oldY " + oldY);
 
-        board[oldX][oldY] = passable;
+        board[(gridSize - 1) - oldY][oldX] = passable;
 
         int controllableType = 0;
         switch(moving.GetComponent<ControllableUnit>().getUnitType())
@@ -155,7 +155,7 @@ public class BattleManager : MonoBehaviour
         //if you have bug, look here
         int newX = (int)(newPos.x) + gridSize / 2;
         int newY = (int)(newPos.y) + gridSize / 2;
-        board[newX][newY] = controllableType;
+        board[(gridSize - 1) - newY][newX] = controllableType;
         moving.GetComponent<ControllableUnit>().gridX = newX;
         moving.GetComponent<ControllableUnit>().gridY = newY;
 
@@ -182,7 +182,7 @@ public class BattleManager : MonoBehaviour
             startY = shoved.GetComponent<Civilian>().gridY;
         }
 
-        int shovedType = board[startX][startY];
+        int shovedType = board[(gridSize - 1) - startY][startX];
 
         int endX = startX;
         int endY = startY;
@@ -222,8 +222,8 @@ public class BattleManager : MonoBehaviour
                 break;
         }
 
-        board[startX][startY] = passable;
-        board[endX][endY] = shovedType;
+        board[(gridSize - 1) - startY][startX] = passable;
+        board[(gridSize - 1) - endY][endX] = shovedType;
 
         if (shoved.CompareTag("Unit"))
         {

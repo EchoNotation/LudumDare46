@@ -14,6 +14,7 @@ public class BattleUI : MonoBehaviour
     bool hasSelection = false;
 
     bool awaitingInput = false;
+    int gridSize;
 
     BattleManager battleManager;
 
@@ -33,6 +34,7 @@ public class BattleUI : MonoBehaviour
     {
         battleManager = FindObjectOfType<BattleManager>();
         optionCanvas.enabled = false;
+        gridSize = battleManager.gridSize;
     }
 
     // Update is called once per frame
@@ -115,8 +117,8 @@ public class BattleUI : MonoBehaviour
         int[][] tempBoard = GetComponent<BattleManager>().getBoard();
 
         int currentGridX = currentlySelected.GetComponent<ControllableUnit>().gridX;
-        int currentGridY = currentlySelected.GetComponent<ControllableUnit>().gridY;
-        Debug.Log("GridX: " + currentGridX + " GridY: " + currentGridY);
+        int currentGridY = (gridSize - 1) - currentlySelected.GetComponent<ControllableUnit>().gridY;
+        /*Debug.Log("GridX: " + currentGridX + " GridY: " + currentGridY);
         Debug.Log("TL:" + tempBoard[currentGridY - 1][currentGridX - 1]);
         Debug.Log("U:" + tempBoard[currentGridY - 1][currentGridX]);
         Debug.Log("TR:" + tempBoard[currentGridY - 1][currentGridX + 1]);
@@ -124,7 +126,7 @@ public class BattleUI : MonoBehaviour
         Debug.Log("DR:" + tempBoard[currentGridY + 1][currentGridX + 1]);
         Debug.Log("D:" + tempBoard[currentGridY + 1][currentGridX]);
         Debug.Log("DL:" + tempBoard[currentGridY + 1][currentGridX - 1]);
-        Debug.Log("L:" + tempBoard[currentGridY][currentGridX - 1]);
+        Debug.Log("L:" + tempBoard[currentGridY][currentGridX - 1]);*/
 
     }
 
@@ -237,7 +239,7 @@ public class BattleUI : MonoBehaviour
                     string shoveString = (shoverX - shovedX) + "" + (shoverY - shovedY);
                     Direction shoveDir = Direction.NONE;
 
-                    int iCoord = shovedY;
+                    int iCoord = (gridSize - 1) - shovedY;
                     int jCoord = shovedX;
 
                     switch(shoveString)
@@ -284,10 +286,13 @@ public class BattleUI : MonoBehaviour
                             break;
                     }
 
-                    int[][] tempBoard = GetComponent<BattleManager>().getBoard();
-                    
-                    if(tempBoard[iCoord][jCoord] == GetComponent<BattleManager>().passable)
+                    int[][] tempBoard = battleManager.getBoard();
+
+                    Debug.Log("TargetI: " + (iCoord) + " TargetJ: " + jCoord);
+
+                    if(tempBoard[iCoord][jCoord] == battleManager.passable)
                     {
+                        Debug.Log("BoardSpace: " + tempBoard[iCoord][jCoord]);
                         battleManager.shove(clicked, shoveDir);
                         //currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
                         unSelect();
