@@ -5,10 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Unit
-  - Civillian
   - Assassin
   - King
   - Tilemap
+  - Civilian
   layers:
   - Default
   - TransparentFX

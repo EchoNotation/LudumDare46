@@ -27,4 +27,11 @@ public class Civilian : MonoBehaviour
     {
         
     }
+
+    private void OnMouseDown()
+    {
+        //signal to UI to draw selection over this unit
+        GameObject.Find("BattleManager").GetComponent<BattleUI>().onUnitClick(gameObject);
+
+    }
 }
