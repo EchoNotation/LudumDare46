@@ -137,6 +137,7 @@ public class BattleManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P)) printBoardIndicies();
     }
 
+    //plans assassin moves
     void predictAssassinMove()
     {
         battleUI.removeMoveMarkers("AssassinMoveMarker");
@@ -152,28 +153,147 @@ public class BattleManager : MonoBehaviour
             {
                 script.desiredPath = fullPath;
 
-                //get first script.speed elements of the path to the king
-                Vector2Int[] currentPath = new Vector2Int[script.speed + 1];
+                List<Vector2Int> currentPath = new List<Vector2Int>();
+                
+                //step along path for the next turn
                 for(int j = 0; j < script.speed + 1 && j < fullPath.Length; j++)
                 {
-                    currentPath[j] = fullPath[j];
-                }
+                    currentPath.Add(fullPath[j]);
 
-                script.nextTurnPath = currentPath;
-                
-                for (int j = 1; j < currentPath.Length; j++)
-                {
+                    //check that along the path isn't someone to stab
+                    //check stab up
+                    if(isStabbable(currentPath[j] + new Vector2Int(0,1)))
+                    {
+                        script.endAction = Assassin.EndAction.STAB;
+                        script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(0, 1));
+                        break; 
+                    }
+
+                    //check stab up left
+                    if(isStabbable(currentPath[j] + new Vector2Int(-1,0)))
+                    {
+                        script.endAction = Assassin.EndAction.STAB;
+                        script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, 0));
+                        break; 
+                    }
+
+                    //check stab up right
+                    if(isStabbable(currentPath[j] + new Vector2Int(1,1)))
+                    {
+                        script.endAction = Assassin.EndAction.STAB;
+                        script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, 1));
+                        break; 
+                    }
+
+                    //check stab right
+                    if(isStabbable(currentPath[j] + new Vector2Int(1,0)))
+                    {
+                        script.endAction = Assassin.EndAction.STAB;
+                        script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, 0));
+                        break; 
+                    }
+
+                    //check stab left
+                    if(isStabbable(currentPath[j] + new Vector2Int(-1,0)))
+                    {
+                        script.endAction = Assassin.EndAction.STAB;
+                        script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, 0));
+                        break; 
+                    }
+
+                    //check stab down left
+                    if(isStabbable(currentPath[j] + new Vector2Int(-1,-1)))
+                    {
+                        script.endAction = Assassin.EndAction.STAB;
+                        script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, -1));
+                        break; 
+                    }
+
+                    //check stab down right
+                    if(isStabbable(currentPath[j] + new Vector2Int(1,-1)))
+                    {
+                        script.endAction = Assassin.EndAction.STAB;
+                        script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, -1));
+                        break; 
+                    }
+
+                    //check stab down
+                    if(isStabbable(currentPath[j] + new Vector2Int(0,-1)))
+                    {
+
+                        script.endAction = Assassin.EndAction.STAB;
+                        script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(0, -1));
+                        break; 
+                    }
+
+                    //check distance to king
+                    if(Vector2Int.Distance(currentPath[i], kingPos) < script.range)
+                    {
+                        //if good distance, check sightline for wall
+
+
+                        //if wall, continue walking
+
+                        //if no wall, set up fire in direction of the king
+                    }
+
                     battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
                 }
+
+                script.nextTurnPath = currentPath.ToArray();
             }
             else Debug.LogWarning("TODO implement when assassin has no path to king");
 
         }
     }
 
+    /*
+     * pos is in tilespace
+     */
+    private bool isStabbable(Vector2Int pos)
+    {
+        int tile = getTileAtSpace(pos);
+        return tile == knight || tile == king || tile == civilian;
+    }
+
+    /*
+     * pos is in tilespace
+     */
+    public GameObject gameObjectAtTile(Vector2Int pos)
+    {
+        int gridX = pos.x + 5;
+        int gridY = pos.y + 5;
+
+        //loop through units list and see if any match position
+        for(int i = 0; i < controllableUnits.Length; i++)
+        {
+            ControllableUnit script = controllableUnits[i].GetComponent<ControllableUnit>();
+            //TODO check if alive
+            //are they standing in that position 
+            if(script.gridX == gridX && script.gridY == gridY)
+            {
+                return script.gameObject;
+            }
+        }
+
+        //loop through civilians list and see if any match position
+        for(int i = 0; i < civilians.Length; i++)
+        {
+            Civilian script = civilians[i].GetComponent<Civilian>();
+            //TODO check if alive
+            //are they standing in that position 
+            if(script.gridX == gridX && script.gridY == gridY)
+            {
+                return script.gameObject;
+            }
+        }
+
+        return null;
+    }
+
     public void moveToPosition(GameObject moving, Vector2 newPos)
     {
-        ControllableUnit script = GetComponent<ControllableUnit>();
+        ControllableUnit script = moving.GetComponent<ControllableUnit>();
 
         //Debug.Log("moveToPosition");
         //TODO have battle UI deal with it
@@ -343,36 +463,16 @@ public class BattleManager : MonoBehaviour
         else return -1;
     }
 
-    public Vector2Int[] findPathTo(Vector2Int src, Vector2Int dest)
+    public Vector2Int[] findPathClosest(int range, Vector2Int src, Vector2Int dest)
     {
         Node start = new Node(null, src.x, src.y);
         Node end = new Node(null, dest.x, dest.y);
 
+        return aStar(range, start, end);
+    }
 
-        if(dest.x < -5 || dest.x > 4 || dest.y > 4 || dest.y < -5)
-        {
-            return null;
-        }
-
-        //int boardSquareID = board[Mathf.Abs(src.y - 4)][src.x + gridSize/2];
-        /*
-        if(boardSquareID != passable)
-        {
-            Debug.Log("Can't Pathfind: start is not passable");
-            return null;
-        }
-        */
-
-        //check bounds of destination
-
-        int boardSquareID = board[Mathf.Abs(dest.y - 4)][dest.x + gridSize/2];
-        if(boardSquareID != passable)
-        {
-            //Debug.Log("Can't Pathfind: end is not passable");
-            return null;
-        }
-
-
+    private Vector2Int[] aStar(int range, Node start, Node end)
+    {
         List<Node> open = new List<Node>();
         List<Node> closed = new List<Node>();
 
@@ -396,21 +496,9 @@ public class BattleManager : MonoBehaviour
             open.RemoveAt(currentIdx);
             closed.Add(current_node);
 
-            if(current_node.x == dest.x && current_node.y == dest.y)
+            if(current_node.x == start.x && current_node.y == end.y)
             {
-                //generate path going backwards
-                List<Vector2Int> path = new List<Vector2Int>();
-
-                Node current = current_node;
-                while(current.parent != null)
-                {
-                    path.Add(new Vector2Int(current.x, current.y));
-                    current = current.parent;
-                }
-                path.Add(src);
-
-                path.Reverse();
-                return path.ToArray();
+                return constructPath(start, current_node);
             }
 
             //generate children for all 8 directions
@@ -470,8 +558,13 @@ public class BattleManager : MonoBehaviour
 
                 //update values
                 children[i].g = current_node.g + 1;
-                children[i].h = Mathf.CeilToInt(Vector2Int.Distance(new Vector2Int(children[i].x, children[i].y), dest));
+                children[i].h = Mathf.CeilToInt(Vector2Int.Distance(new Vector2Int(children[i].x, children[i].y), new Vector2Int(end.x,end.y)));
                 children[i].f = children[i].g + children[i].h;
+
+                if(children[i].h < range && range != -1)
+                {
+                    return constructPath(start, current_node);
+                }
 
                 //add child to open list if not on the list already with more efficient path
                 for(int j = 0; j < open.Count; j++)
@@ -485,7 +578,58 @@ public class BattleManager : MonoBehaviour
 
         //no path found
         return null;
+
     }
+
+    private Vector2Int[] constructPath(Node start, Node end)
+    {
+        //generate path going backwards
+        List<Vector2Int> path = new List<Vector2Int>();
+
+        Node current = end;
+        while (current.parent != null)
+        {
+            path.Add(new Vector2Int(current.x, current.y));
+            current = current.parent;
+        }
+        path.Add(new Vector2Int(start.x, start.y));
+
+        path.Reverse();
+        return path.ToArray();
+    }
+
+    public Vector2Int[] findPathTo(Vector2Int src, Vector2Int dest)
+    {
+        Node start = new Node(null, src.x, src.y);
+        Node end = new Node(null, dest.x, dest.y);
+
+
+        if(dest.x < -5 || dest.x > 4 || dest.y > 4 || dest.y < -5)
+        {
+            return null;
+        }
+
+        //int boardSquareID = board[Mathf.Abs(src.y - 4)][src.x + gridSize/2];
+        /*
+        if(boardSquareID != passable)
+        {
+            Debug.Log("Can't Pathfind: start is not passable");
+            return null;
+        }
+        */
+
+        //check bounds of destination
+
+        int boardSquareID = board[Mathf.Abs(dest.y - 4)][dest.x + gridSize/2];
+        if(boardSquareID != passable)
+        {
+            //Debug.Log("Can't Pathfind: end is not passable");
+            return null;
+        }
+
+        return aStar(-1, start, end);
+
+}
 
     private Node createChildIfValid(Node parent, int offsetx, int offsety)
     {
@@ -664,31 +808,60 @@ public class BattleManager : MonoBehaviour
     
     void assassinTurn()
     {
-        //have assassin move on their path if it is still uninterrupted
+        //have assassin execute their turn
         for(int i = 0; i < assassins.Length; i++)
         {
             Assassin script = assassins[i].GetComponent<Assassin>();
 
-            bool routeInterrupted = false;
-            for(int j = 1; j < script.nextTurnPath.Length; j++)
+            //if stabbing
+            if (script.endAction == Assassin.EndAction.STAB)
             {
-                if (!isPassableAtTileSpace(script.nextTurnPath[j]))
-                {
-                    //recalculate path/plan
+                //"walk" to end of path
+                moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
 
-                    routeInterrupted = true;
-                }
+                //stab the person
+                script.target.GetComponent<SpriteRenderer>().enabled = false;
+                //disable isAlive flag on them                
+                //TODO
+            }
+            else if (script.endAction == Assassin.EndAction.AIM)
+            {
+                //"walk" to end of path
+                moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
+
+                //aim bow
 
             }
-
-            if(!routeInterrupted)
+            else if (script.endAction == Assassin.EndAction.FIRE)
             {
+                //fire bow towards direction of original aiming, killing who it hits
+            }
+            else if (script.endAction == Assassin.EndAction.IDLE)
+            {
+                //just "walk" to end of path
                 moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
             }
-            else
-            {
-                Debug.LogWarning("TODO assassin route interrupted movement");
-            }
+
+            //bool routeInterrupted = false;
+            //for(int j = 1; j < script.nextTurnPath.Length; j++)
+            //{
+            //    if (!isPassableAtTileSpace(script.nextTurnPath[j]))
+            //    {
+            //        //recalculate path/plan
+
+            //        routeInterrupted = true;
+            //    }
+
+            //}
+
+            //if(!routeInterrupted)
+            //{
+            //    moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
+            //}
+            //else
+            //{
+            //    Debug.LogWarning("TODO assassin route interrupted movement");
+            //}
         }
 
         
@@ -727,10 +900,18 @@ public class BattleManager : MonoBehaviour
      */
     public bool isPassableAtTileSpace(Vector2Int pos)
     {
-        int tile = board[gridSize - 1 - (pos.y + gridSize/2)][pos.x + gridSize/2];
-
+        int tile = getTileAtSpace(pos);
         return tile == passable;
 
+    }
+
+    /*
+     * pos is in tilespace
+     */
+    public int getTileAtSpace(Vector2Int pos)
+    {
+        int tile = board[gridSize - 1 - (pos.y + gridSize/2)][pos.x + gridSize/2];
+        return tile;
     }
 
     void readTiles()

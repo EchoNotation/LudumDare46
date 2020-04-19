@@ -34,13 +34,17 @@ public class BattleUI : MonoBehaviour
 
     Action currentAction = Action.NONE;
 
+    private void Awake()
+    {
+        tiles = FindObjectOfType<Tilemap>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         battleManager = FindObjectOfType<BattleManager>();
         optionCanvas.enabled = false;
         gridSize = battleManager.gridSize;
-        tiles = FindObjectOfType<Tilemap>();
     }
 
     // Update is called once per frame

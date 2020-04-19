@@ -5,9 +5,21 @@ using UnityEngine.Tilemaps;
 
 public class Assassin : MonoBehaviour
 {
+    public enum EndAction
+    {
+        IDLE,
+        STAB,
+        AIM,
+        FIRE
+    }
+
+    public EndAction endAction = EndAction.IDLE;
+
     public int gridX = 0;
     public int gridY = 0;
     private GameObject king;
+
+    public GameObject target;
 
     public int speed = 2;
 
