@@ -41,6 +41,8 @@ public class BattleManager : MonoBehaviour
 
     public GameObject assassinMarker;
 
+    BattleUI battleUI;
+
     public Text cavalryText;
     public int turnsToSurvive;
 
@@ -104,6 +106,7 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
+        battleUI = FindObjectOfType<BattleUI>();
         predictAssassinMove();
     }
 
@@ -136,7 +139,7 @@ public class BattleManager : MonoBehaviour
 
     void predictAssassinMove()
     {
-        FindObjectOfType<BattleUI>().removeMoveMarkers("AssassinMoveMarker");
+        battleUI.removeMoveMarkers("AssassinMoveMarker");
 
         Vector2Int kingPos = new Vector2Int(FindObjectOfType<King>().gridX - gridSize/2, FindObjectOfType<King>().gridY - gridSize/2 + 1);
         for (int i = 0; i < assassins.Length; i++)
@@ -160,7 +163,7 @@ public class BattleManager : MonoBehaviour
                 
                 for (int j = 1; j < currentPath.Length; j++)
                 {
-                    FindObjectOfType<BattleUI>().createMarkerAtTile(currentPath[j], assassinMarker);
+                    battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
                 }
             }
             else Debug.LogWarning("TODO implement when assassin has no path to king");
@@ -170,20 +173,22 @@ public class BattleManager : MonoBehaviour
 
     public void moveToPosition(GameObject moving, Vector2 newPos)
     {
+        ControllableUnit script = GetComponent<ControllableUnit>();
+
         //Debug.Log("moveToPosition");
         //TODO have battle UI deal with it
-        if (moving.GetComponent<ControllableUnit>().hasMoved) return;
+        if (script.hasMoved) return;
 
         //update board (old and new spaces)
-        int oldX = moving.GetComponent<ControllableUnit>().gridX;
-        int oldY = moving.GetComponent<ControllableUnit>().gridY;
+        int oldX = script.gridX;
+        int oldY = script.gridY;
 
         //Debug.Log("oldX " + oldX + " oldY " + oldY);
 
         board[(gridSize - 1) - oldY][oldX] = passable;
 
         int controllableType = 0;
-        switch(moving.GetComponent<ControllableUnit>().getUnitType())
+        switch(script.getUnitType())
         {
             case ControllableUnit.UnitType.KNIGHT:
                 controllableType = knight;
@@ -200,10 +205,10 @@ public class BattleManager : MonoBehaviour
         int newX = (int)(newPos.x) + gridSize / 2;
         int newY = (int)(newPos.y) + gridSize / 2;
         board[(gridSize - 1) - newY][newX] = controllableType;
-        moving.GetComponent<ControllableUnit>().gridX = newX;
-        moving.GetComponent<ControllableUnit>().gridY = newY;
+        script.gridX = newX;
+        script.gridY = newY;
 
-        moving.GetComponent<ControllableUnit>().updateMoveablePositions();
+        script.updateMoveablePositions();
 
         //move prefab to correct location
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
@@ -546,7 +551,7 @@ public class BattleManager : MonoBehaviour
         {
             assassins[i].GetComponent<Assassin>().desiredPath = null;
             assassins[i].GetComponent<Assassin>().nextTurnPath = null;
-            FindObjectOfType<BattleUI>().removeMoveMarkers("AssassinMoveMarker");
+            battleUI.removeMoveMarkers("AssassinMoveMarker");
 
         }
 
@@ -563,7 +568,7 @@ public class BattleManager : MonoBehaviour
         {
             assassins[i].GetComponent<Assassin>().desiredPath = null;
             assassins[i].GetComponent<Assassin>().nextTurnPath = null;
-            FindObjectOfType<BattleUI>().removeMoveMarkers("AssassinMoveMarker");
+            battleUI.removeMoveMarkers("AssassinMoveMarker");
 
         }
         predictAssassinMove();
@@ -835,6 +840,8 @@ public class BattleManager : MonoBehaviour
             controllableUnits[i].GetComponent<ControllableUnit>().hasMoved = false;
             controllableUnits[i].GetComponent<ControllableUnit>().hasTakenAction = false;
         }
+
+        predictAssassinMove();
 
     }
 

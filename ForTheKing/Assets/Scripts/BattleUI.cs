@@ -18,6 +18,8 @@ public class BattleUI : MonoBehaviour
 
     BattleManager battleManager;
 
+    Tilemap tiles;
+
     [SerializeField]
     private bool debugUnlimitedMovement = false;
 
@@ -38,6 +40,7 @@ public class BattleUI : MonoBehaviour
         battleManager = FindObjectOfType<BattleManager>();
         optionCanvas.enabled = false;
         gridSize = battleManager.gridSize;
+        tiles = FindObjectOfType<Tilemap>();
     }
 
     // Update is called once per frame
@@ -96,7 +99,7 @@ public class BattleUI : MonoBehaviour
 
     public void createMarkerAtTile(Vector2Int tilePos, GameObject marker)
     {
-        float offset = FindObjectOfType<Tilemap>().cellSize.x / 2;
+        float offset = tiles.cellSize.x / 2;
         Vector3 worldPos = new Vector3(tilePos.x + offset, tilePos.y + offset);
         Instantiate(marker, worldPos, Quaternion.identity);
     }

@@ -11,6 +11,8 @@ public class Assassin : MonoBehaviour
 
     public int speed = 2;
 
+    public int range = 3;
+
     public Vector2Int[] desiredPath;
     public Vector2Int[] nextTurnPath;
 
