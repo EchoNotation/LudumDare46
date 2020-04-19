@@ -524,61 +524,73 @@ public class BattleManager : MonoBehaviour
 
             //generate children for all 8 directions
             //TODO if contained in open, check if smaller or greater value of g
+
+            List<Node> children = new List<Node>();
+
             Node upLeft = createChildIfValid(current_node, -1, 1);
-            if (upLeft != null && !open.Contains(upLeft) && !closed.Contains(upLeft))
-            {
-                upLeft.g = current_node.g + 1.5;
-                open.Add(upLeft);
-            }
-            
+            if (upLeft != null) children.Add(upLeft);
+
             Node upMid = createChildIfValid(current_node, 0, 1);
-            if (upMid != null && !open.Contains(upMid) && !closed.Contains(upMid))
-            {
-                upMid.g = current_node.g + 1;
-                open.Add(upMid);
-            }
+            if (upMid != null) children.Add(upMid);
 
             Node upRight = createChildIfValid(current_node, 1, 1);
-            if (upRight != null && !open.Contains(upRight) && !closed.Contains(upRight))
-            {
-                upRight.g = current_node.g + 1.5;
-                open.Add(upRight);
-            }
-            
+            if (upRight != null) children.Add(upRight);
+
             Node left = createChildIfValid(current_node, -1, 0);
-            if (left != null && !open.Contains(left) && !closed.Contains(left))
-            {
-                left.g = current_node.g + 1;
-                open.Add(left);
-            }
+            if (left != null) children.Add(left);
 
             Node right = createChildIfValid(current_node, 1, 0);
-            if (right != null && !open.Contains(right) && !closed.Contains(right))
-            {
-                right.g = current_node.g + 1; 
-                open.Add(right);
-            }
+            if (right != null) children.Add(right);
 
             Node downLeft = createChildIfValid(current_node, -1, -1);
-            if (downLeft != null && !open.Contains(downLeft) && !closed.Contains(downLeft))
-            {
-                downLeft.g = current_node.g + 1.5;
-                open.Add(downLeft);
-            }
+            if (downLeft != null) children.Add(downLeft);
 
             Node downMid = createChildIfValid(current_node, 0, -1);
-            if (downMid != null && !open.Contains(downMid) && !closed.Contains(downMid))
-            {
-                downMid.g = current_node.g + 1;
-                open.Add(downMid);
-            }
+            if (downMid != null) children.Add(downMid);
 
             Node downRight = createChildIfValid(current_node, 1, -1);
-            if (downRight != null && !open.Contains(downRight) && !closed.Contains(downRight))
+            if (downRight != null) children.Add(downRight);
+
+            for(int i = 0; i < children.Count; i++)
             {
-                downRight.g = current_node.g + 1.5;
-                open.Add(downRight);
+                bool skip= false;
+
+                children[i].g = current_node.g + 1;
+
+                //check if child in open, if so check if g can be updated
+                for(int j = 0; j < open.Count; j++)
+                {
+                    if(children[i].Equals(open[j]))
+                    {
+                        if(children[i].g < open[j].g)
+                        {
+                            open[j].g = children[i].g;
+                        }
+                        skip = true;
+                    }
+                }
+
+                if (skip) continue;
+
+                //check if child is in closed
+                for(int j = 0; j < closed.Count; j++)
+                {
+                    if(children[i].Equals(closed[j]))
+                    {
+                        if(children[i].g < closed[j].g)
+                        {
+                            closed[j].g = children[i].g;
+                        }
+                        skip = true;
+                    }
+                }
+
+                if (skip) continue;
+
+                //if neither of those, add to open
+                open.Add(children[i]);
             }
+
         }
 
         Vector2Int[] pos = new Vector2Int[closed.Count];
