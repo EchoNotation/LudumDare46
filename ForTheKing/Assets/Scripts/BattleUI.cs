@@ -10,6 +10,7 @@ public class BattleUI : MonoBehaviour
     public Canvas optionCanvas;
 
     public GameObject movementMarker;
+    public GameObject selectionMarker;
 
     bool hasSelection = false;
 
@@ -405,6 +406,7 @@ public class BattleUI : MonoBehaviour
         GameObject.Find("SpecialButton").GetComponentInChildren<Text>().text = specialText;
 
         updateSpecialButton(battleManager.goldExists[battleManager.turnNumber]);
+        selectionMarker.transform.position = currentlySelected.transform.position;
     }
 
     public void unSelect()
@@ -416,6 +418,8 @@ public class BattleUI : MonoBehaviour
         currentAction = Action.NONE;
         awaitingInput = false;
         optionCanvas.enabled = false;
+
+        selectionMarker.transform.position = new Vector3(-15, 3, 0);
     }
 
     private void OnDrawGizmos()
