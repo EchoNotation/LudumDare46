@@ -22,6 +22,8 @@ public class Assassin : MonoBehaviour
 
     public GameObject target;
 
+    public GameObject taunter;
+
     public int speed = 2;
 
     public int range = 3;
@@ -29,10 +31,13 @@ public class Assassin : MonoBehaviour
     public Vector2Int[] desiredPath;
     public Vector2Int[] nextTurnPath;
 
+    BattleUI ui;
+
     // Start is called before the first frame update
     void Start()
     {
         king = GameObject.FindGameObjectWithTag("King");
+        ui = FindObjectOfType<BattleUI>();
     }
 
     public void snapToGrid()
@@ -43,9 +48,8 @@ public class Assassin : MonoBehaviour
         transform.position = tiles.CellToWorld(new Vector3Int(gridX - gridSize / 2, gridY - gridSize / 2, -1)) + offset;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnMouseDown()
     {
-        
+        ui.onAssassinClick(gameObject);
     }
 }

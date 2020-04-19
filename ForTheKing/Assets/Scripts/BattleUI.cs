@@ -222,6 +222,20 @@ public class BattleUI : MonoBehaviour
         }
     }
 
+    public void onAssassinClick(GameObject clicked)
+    {
+        if(awaitingInput && currentAction == Action.TAUNT)
+        {
+            //send to battle manager
+            battleManager.taunt(clicked, currentlySelected);
+
+            //clear button
+            currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+
+            unSelect();
+        }
+    }
+
     public void onUnitClick(GameObject clicked)
     {
         //Debug.Log("Unit click");

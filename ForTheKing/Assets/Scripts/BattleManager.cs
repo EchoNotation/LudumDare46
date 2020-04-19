@@ -180,7 +180,18 @@ public class BattleManager : MonoBehaviour
         {
             Assassin script = assassins[i].GetComponent<Assassin>();
             Vector2Int pos = new Vector2Int(script.gridX - gridSize/2, script.gridY - gridSize/2);
-            Vector2Int[] fullPath = findPathClosest(script.range - 2, pos, kingPos);
+
+            if(script.taunter != null)
+            {
+
+            }
+            else
+            {
+                //go after king or stab people on way to king
+                
+            }
+
+            Vector2Int[] fullPath = findPathClosest(2, pos, kingPos);
 
             script.target = null;
             script.endAction = Assassin.EndAction.IDLE;
@@ -501,9 +512,9 @@ public class BattleManager : MonoBehaviour
         GameObject.Find("Gold").transform.position = tiles.CellToWorld(new Vector3Int((int)(pos.x + 5) - (gridSize / 2), (int)(pos.y + 5) - (gridSize / 2), 0)) + offset;
     }
     
-    public void taunt()
+    public void taunt(GameObject target, GameObject taunter)
     {
-
+        target.GetComponent<Assassin>().taunter = taunter;
     }
 
     public void block()
@@ -531,7 +542,7 @@ public class BattleManager : MonoBehaviour
 
         public double f = 0.0;
         public double g = 0.0;
-        public double h = 0.0;
+        public double h = 100.0;
 
         public Node parent = null;
 
@@ -757,13 +768,13 @@ public class BattleManager : MonoBehaviour
                 //update values
                 children[i].g = current_node.g + 1;
                 //children[i].h = Mathf.CeilToInt(Vector2Int.Distance(new Vector2Int(children[i].x, children[i].y), new Vector2Int(end.x,end.y)));
-                children[i].h = Mathf.CeilToInt(Mathf.Abs(children[i].x - end.x) + Mathf.Abs(children[i].y - end.y)) + 1;
+                children[i].h = Mathf.CeilToInt(Mathf.Abs(children[i].x - end.x) + Mathf.Abs(children[i].y - end.y));
                 children[i].f = children[i].g + children[i].h;
 
-                //if(children[i].h < range && range != -1)
-                //{
-                //    return constructPath(start, children[i]);
-                //}
+                if(children[i].h < range && range != -1)
+                {
+                    return constructPath(start, children[i]);
+                }
 
                 bool wasOpen = false;
 
@@ -805,7 +816,7 @@ public class BattleManager : MonoBehaviour
 
             if (closest != null)
             {
-                Debug.Log("couldn't get within range, closest was " + closest.h + " tiles away");
+                Debug.Log("couldn't get within range, closest was " + closest.h + " tiles away at " + closest.x + ", " + closest.y);
                 return constructPath(start, closest);
             }
             else return null;
