@@ -315,7 +315,8 @@ public class BattleManager : MonoBehaviour
 
                     Debug.Log("assassin is going to " + script.endAction.ToString());
 
-                    battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
+                    if(j != 0)
+                        battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
                 }
 
                 script.nextTurnPath = currentPath.ToArray();
