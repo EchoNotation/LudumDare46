@@ -75,7 +75,7 @@ public class BattleUI : MonoBehaviour
         {
             currentAction = Action.NONE;
             awaitingInput = false;
-            removeMoveMarkers();
+            removeMoveMarkers("MoveMarker");
 
             return;
         }
@@ -88,20 +88,20 @@ public class BattleUI : MonoBehaviour
 
         for(int i = 0; i < moves.Length; i++)
         {
-            createMarkerAtTile(moves[i]);
+            createMarkerAtTile(moves[i], movementMarker);
         }
     }
 
-    private void createMarkerAtTile(Vector2Int tilePos)
+    public void createMarkerAtTile(Vector2Int tilePos, GameObject marker)
     {
         float offset = FindObjectOfType<Tilemap>().cellSize.x / 2;
         Vector3 worldPos = new Vector3(tilePos.x + offset, tilePos.y + offset);
-        Instantiate(movementMarker, worldPos, Quaternion.identity);
+        Instantiate(marker, worldPos, Quaternion.identity);
     }
 
-    private void removeMoveMarkers()
+    private void removeMoveMarkers(string tag)
     {
-        GameObject[] markers = GameObject.FindGameObjectsWithTag("MoveMarker");
+        GameObject[] markers = GameObject.FindGameObjectsWithTag(tag);
         for(int i = 0; i < markers.Length; i++)
         {
             Destroy(markers[i]);
@@ -186,7 +186,7 @@ public class BattleUI : MonoBehaviour
                 if(!debugUnlimitedMovement)
                     currentlySelected.GetComponent<ControllableUnit>().hasMoved = true;
 
-                removeMoveMarkers();
+                removeMoveMarkers("MoveMarker");
 
                 unSelect();
             }            
@@ -211,8 +211,9 @@ public class BattleUI : MonoBehaviour
         {
             if(currentAction == Action.MOVE)
             {
-                removeMoveMarkers();
+                removeMoveMarkers("MoveMarker");
                 unSelect();
+
             }
 
             //do the thing
@@ -326,7 +327,7 @@ public class BattleUI : MonoBehaviour
 
     public void setSelected(GameObject select)
     {
-        removeMoveMarkers();
+        removeMoveMarkers("MoveMarker");
         currentlySelected = select;
         hasSelection = true;
         awaitingInput = false;
@@ -362,7 +363,7 @@ public class BattleUI : MonoBehaviour
     public void unSelect()
     {
         if(currentlySelected != null) currentlySelected.GetComponent<ControllableUnit>().moveablePositions.Clear();
-        removeMoveMarkers();
+        removeMoveMarkers("MoveMarker");
         currentlySelected = null;
         hasSelection = false;
         currentAction = Action.NONE;

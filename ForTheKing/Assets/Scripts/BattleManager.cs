@@ -39,6 +39,8 @@ public class BattleManager : MonoBehaviour
     int assassin = 7;
     public int gridSize = 10;
 
+    public GameObject assassinMarker;
+
     public Text cavalryText;
     public int turnsToSurvive;
 
@@ -101,6 +103,11 @@ public class BattleManager : MonoBehaviour
                 Debug.Log("Step "+ i + ": " + debugPath[i].x + ", " + debugPath[i].y);*/
     }
 
+    private void Start()
+    {
+        predictAssassinMove();
+    }
+
     private void OnDrawGizmos()
     {
         /*
@@ -130,7 +137,23 @@ public class BattleManager : MonoBehaviour
 
     void predictAssassinMove()
     {
+        Vector2Int kingPos = new Vector2Int(FindObjectOfType<King>().gridX - gridSize/2, FindObjectOfType<King>().gridY - gridSize/2 + 1);
+        for (int i = 0; i < assassins.Length; i++)
+        {
+            Assassin script = assassins[i].GetComponent<Assassin>();
+            Vector2Int pos = new Vector2Int(script.gridX - gridSize/2, script.gridY - gridSize/2);
+            Vector2Int[] path = findPathTo(pos, kingPos);
 
+            if (path != null)
+            {
+                for (int j = 0; j < path.Length; j++)
+                {
+                    FindObjectOfType<BattleUI>().createMarkerAtTile(path[j], assassinMarker);
+                }
+            }
+            else Debug.LogWarning("TODO implement when assassin has no path to king");
+
+        }
     }
 
     public void moveToPosition(GameObject moving, Vector2 newPos)
@@ -585,7 +608,7 @@ public class BattleManager : MonoBehaviour
     
     void assassinTurn()
     {
-
+        
     }
 
     void readTiles()
