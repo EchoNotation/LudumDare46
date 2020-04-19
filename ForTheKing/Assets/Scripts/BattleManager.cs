@@ -23,6 +23,11 @@ public class BattleManager : MonoBehaviour
     GameObject kingObj;
     public Tilemap tiles;
     int[][] board;
+    Vector3[][] unitPositions, assassinPositions, civilianPositions;
+    int[][][] savedBoards;
+    Vector2Int[][] unitGridSpaces, assassinGridSpaces, civilianGridSpaces;
+    int maxNumberOfTurns = 30;
+    int turnNumber = 1;
     int empty = -1;
     int passable = 0;
     int wall = 1;
@@ -49,10 +54,29 @@ public class BattleManager : MonoBehaviour
         }
 
         board = new int[gridSize][];
+
         readTiles();
         controllableUnits = GameObject.FindGameObjectsWithTag("Unit");
         assassins = GameObject.FindGameObjectsWithTag("Assassin");
         civilians = GameObject.FindGameObjectsWithTag("Civillian");
+        unitPositions = new Vector3[maxNumberOfTurns][];
+        assassinPositions = new Vector3[maxNumberOfTurns][];
+        civilianPositions = new Vector3[maxNumberOfTurns][];
+        unitGridSpaces = new Vector2Int[maxNumberOfTurns][];
+        assassinGridSpaces = new Vector2Int[maxNumberOfTurns][];
+        civilianGridSpaces = new Vector2Int[maxNumberOfTurns][];
+        savedBoards = new int[maxNumberOfTurns][][];
+
+        for(int i = 0; i < maxNumberOfTurns; i++)
+        {
+            unitPositions[i] = new Vector3[controllableUnits.Length];
+            assassinPositions[i] = new Vector3[assassins.Length];
+            civilianPositions[i] = new Vector3[civilians.Length];
+            unitGridSpaces[i] = new Vector2Int[controllableUnits.Length];
+            assassinGridSpaces[i] = new Vector2Int[assassins.Length];
+            civilianGridSpaces[i] = new Vector2Int[civilians.Length];
+        }
+
         readUnits();
         //printBoard();
         printBoardIndicies();
@@ -91,7 +115,8 @@ public class BattleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //Debug.Log(turnNumber);
+        if (Input.GetKeyDown(KeyCode.P)) printBoardIndicies();
     }
 
     void predictAssassinMove()
@@ -417,10 +442,91 @@ public class BattleManager : MonoBehaviour
                 cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
             }
         }
+
+        turnNumber++;
+        saveBoard(turnNumber);
     }
 
     public void rewind()
     {
+        if (turnNumber <= 1) return;
+        turnNumber--;
+        loadBoard(turnNumber);
+        turnsToSurvive++;
+        cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
+    }
+
+    public void restartTurn()
+    {
+        loadBoard(turnNumber);
+    }
+
+
+    public void saveBoard(int id)
+    {
+        if (id < 0 || id >= 30) return;
+
+        int gridSize = tiles.size.y;
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
+
+        for (int i = 0; i < controllableUnits.Length; i++)
+        {
+            
+            int tempX = controllableUnits[i].GetComponent<ControllableUnit>().gridX;
+            int tempY = controllableUnits[i].GetComponent<ControllableUnit>().gridY;
+            unitPositions[id][i] = tiles.CellToWorld(new Vector3Int(tempX - gridSize / 2, tempY - gridSize / 2, 0)) + offset;
+            unitGridSpaces[id][i] = new Vector2Int(tempX, tempY);
+        }
+
+        for (int i = 0; i < assassins.Length; i++)
+        {
+            int tempX = assassins[i].GetComponent<Assassin>().gridX;
+            int tempY = assassins[i].GetComponent<Assassin>().gridY;
+            assassinPositions[id][i] = tiles.CellToWorld(new Vector3Int(tempX - gridSize / 2, tempY - gridSize / 2, 0)) + offset;
+            assassinGridSpaces[id][i] = new Vector2Int(tempX, tempY);
+        }
+
+        for(int i = 0; i < civilians.Length; i++)
+        {
+            int tempX = civilians[i].GetComponent<Civilian>().gridX;
+            int tempY = civilians[i].GetComponent<Civilian>().gridY;
+            civilianPositions[id][i] = tiles.CellToWorld(new Vector3Int(tempX - gridSize / 2, tempY - gridSize / 2, 0)) + offset;
+            civilianGridSpaces[id][i] = new Vector2Int(tempX, tempY);
+        }
+
+        savedBoards[id] = board.Clone() as int[][];
+    }
+
+    public void loadBoard(int id)
+    {
+        if (id < 0 || id >= 30) return;
+
+        board = savedBoards[id].Clone() as int[][];
+
+        for(int i = 0; i < controllableUnits.Length; i++)
+        {
+            controllableUnits[i].transform.position = unitPositions[id][i];
+            Vector2Int temp = unitGridSpaces[id][i];
+            controllableUnits[i].GetComponent<ControllableUnit>().gridX = temp.x;
+            controllableUnits[i].GetComponent<ControllableUnit>().gridY = temp.y;
+        }
+
+        for(int i = 0; i < assassins.Length; i++)
+        {
+            assassins[i].transform.position = assassinPositions[id][i];
+            Vector2Int temp2 = assassinGridSpaces[id][i];
+            assassins[i].GetComponent<Assassin>().gridX = temp2.x;
+            assassins[i].GetComponent<Assassin>().gridY = temp2.y;
+        }
+
+        for(int i = 0; i < civilians.Length; i++)
+        {
+            civilians[i].transform.position = civilianPositions[id][i];
+            Vector2Int temp3 = assassinGridSpaces[id][i];
+            civilians[i].GetComponent<Civilian>().gridX = temp3.x;
+            civilians[i].GetComponent<Civilian>().gridY = temp3.y;
+        }
+
         
     }
 
@@ -530,6 +636,8 @@ public class BattleManager : MonoBehaviour
         kingObj.GetComponent<King>().snapToGrid();
 
         board[kingX][kingY] = king;
+
+        saveBoard(turnNumber);
     }
 
     void printBoard()

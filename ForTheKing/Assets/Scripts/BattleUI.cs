@@ -100,7 +100,7 @@ public class BattleUI : MonoBehaviour
 
     public void onTileClick(int x, int y)
     {
-        Debug.Log(x + " " + y);
+        //Debug.Log(x + " " + y);
 
         if(awaitingInput)
         {
