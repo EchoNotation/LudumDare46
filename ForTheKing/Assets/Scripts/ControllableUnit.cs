@@ -90,6 +90,7 @@ public class ControllableUnit : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        /*
         for(int i = 0; i < moveablePositions.Count; i++)
         {
             float offset = FindObjectOfType<Tilemap>().cellSize.x / 2;
@@ -98,6 +99,7 @@ public class ControllableUnit : MonoBehaviour
             Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(pos + offset3D, 0.25f);
         }
+        */
     }
 
     // Update is called once per frame
