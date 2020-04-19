@@ -1108,11 +1108,15 @@ public class BattleManager : MonoBehaviour
                 {
                     ControllableUnit control = script.target.GetComponent<ControllableUnit>();
 
+                    control.isAlive = false;
+
                     board[gridSize - 1 - control.gridY][control.gridX] = passable;
                 }
                 else if (script.target.tag == "Civilian")
                 {
                     Civilian civ = script.target.GetComponent<Civilian>();
+
+                    civ.isAlive = false;
 
                     board[gridSize - 1 - civ.gridY][civ.gridX] = passable;
                 }
