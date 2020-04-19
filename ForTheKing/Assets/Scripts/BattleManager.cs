@@ -1107,6 +1107,8 @@ public class BattleManager : MonoBehaviour
 
                     for (int k = 0; k < possibleArray.Length; k++)
                     {
+                        if (board[(gridSize - 1) - possibleArray[k].y][possibleArray[k].x] != passable) continue;
+
                         Vector2Int temp = possibleArray[k];
                         Vector3 tempWorldPos3D = tiles.CellToWorld(new Vector3Int(temp.x - gridSize / 2, temp.y - gridSize / 2, 0)) + offset;
                         Vector2 rayOrigin = new Vector2(tempWorldPos3D.x, tempWorldPos3D.y);
