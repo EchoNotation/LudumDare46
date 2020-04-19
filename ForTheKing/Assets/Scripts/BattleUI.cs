@@ -23,7 +23,7 @@ public class BattleUI : MonoBehaviour
         SHOVE,
         COIN,
         TAUNT,
-       //TODO the knight
+        BLOCK
     }
 
     Action currentAction = Action.NONE;
@@ -112,6 +112,20 @@ public class BattleUI : MonoBehaviour
         awaitingInput = true;
         currentAction = Action.SHOVE;
 
+        int[][] tempBoard = GetComponent<BattleManager>().getBoard();
+
+        int currentGridX = currentlySelected.GetComponent<ControllableUnit>().gridX;
+        int currentGridY = currentlySelected.GetComponent<ControllableUnit>().gridY;
+        Debug.Log("GridX: " + currentGridX + " GridY: " + currentGridY);
+        Debug.Log("TL:" + tempBoard[currentGridY - 1][currentGridX - 1]);
+        Debug.Log("U:" + tempBoard[currentGridY - 1][currentGridX]);
+        Debug.Log("TR:" + tempBoard[currentGridY - 1][currentGridX + 1]);
+        Debug.Log("R:" + tempBoard[currentGridY][currentGridX + 1]);
+        Debug.Log("DR:" + tempBoard[currentGridY + 1][currentGridX + 1]);
+        Debug.Log("D:" + tempBoard[currentGridY + 1][currentGridX]);
+        Debug.Log("DL:" + tempBoard[currentGridY + 1][currentGridX - 1]);
+        Debug.Log("L:" + tempBoard[currentGridY][currentGridX - 1]);
+
     }
 
     public void onSpecial()
@@ -122,7 +136,7 @@ public class BattleUI : MonoBehaviour
         switch(currentlySelected.GetComponent<ControllableUnit>().getUnitType())
         {
             case ControllableUnit.UnitType.KNIGHT:
-                //TODO Add Knight special.
+                currentAction = Action.BLOCK;
                 break;
             case ControllableUnit.UnitType.JESTER:
                 currentAction = Action.TAUNT;
@@ -185,7 +199,7 @@ public class BattleUI : MonoBehaviour
 
     public void onUnitClick(GameObject clicked)
     {
-        Debug.Log("Unit click");
+        //Debug.Log("Unit click");
 
         if(awaitingInput)
         {
@@ -214,7 +228,8 @@ public class BattleUI : MonoBehaviour
                 }
                 else if(clicked.CompareTag("Civilian"))
                 {
-
+                    shovedX = clicked.GetComponent<Civilian>().gridX;
+                    shovedY = clicked.GetComponent<Civilian>().gridY;
                 }
 
                 if (Mathf.Abs(shoverX - shovedX) <= 1 && Mathf.Abs(shoverY - shovedY) <= 1)
@@ -222,31 +237,46 @@ public class BattleUI : MonoBehaviour
                     string shoveString = (shoverX - shovedX) + "" + (shoverY - shovedY);
                     Direction shoveDir = Direction.NONE;
 
+                    int iCoord = shovedY;
+                    int jCoord = shovedX;
+
                     switch(shoveString)
                     {
                         case "-1-1":
                             shoveDir = Direction.UP_RIGHT;
+                            iCoord--;
+                            jCoord++;
                             break;
                         case "-10":
                             shoveDir = Direction.RIGHT;
+                            jCoord++;
                             break;
                         case "-11":
                             shoveDir = Direction.DOWN_RIGHT;
+                            jCoord++;
+                            iCoord++;
                             break;
                         case "0-1":
                             shoveDir = Direction.UP;
+                            iCoord--;
                             break;
                         case "01":
                             shoveDir = Direction.DOWN;
+                            iCoord++;
                             break;
                         case "1-1":
                             shoveDir = Direction.UP_LEFT;
+                            iCoord--;
+                            jCoord--;
                             break;
                         case "10":
                             shoveDir = Direction.LEFT;
+                            jCoord--;
                             break;
                         case "11":
                             shoveDir = Direction.DOWN_LEFT;
+                            jCoord--;
+                            iCoord++;
                             break;
                         case "00":
                         default:
@@ -254,9 +284,14 @@ public class BattleUI : MonoBehaviour
                             break;
                     }
 
-                    battleManager.shove(clicked, shoveDir);
-                    //currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
-                    unSelect();
+                    int[][] tempBoard = GetComponent<BattleManager>().getBoard();
+                    
+                    if(tempBoard[iCoord][jCoord] == GetComponent<BattleManager>().passable)
+                    {
+                        battleManager.shove(clicked, shoveDir);
+                        //currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+                        unSelect();
+                    }                  
                 }
             }
             else if(currentAction == Action.TAUNT)
@@ -274,7 +309,8 @@ public class BattleUI : MonoBehaviour
         }
         else
         {
-            setSelected(clicked);
+            if(clicked.CompareTag("Unit")) 
+                setSelected(clicked);
         }
 
     }
@@ -301,8 +337,7 @@ public class BattleUI : MonoBehaviour
                 specialText = "Taunt";
                 break;
             case ControllableUnit.UnitType.KNIGHT:
-                //TODO add knight special.
-                specialText = "Knight Special";
+                specialText = "Block";
                 break;
             case ControllableUnit.UnitType.NOBLE:
                 specialText = "Toss Coin";

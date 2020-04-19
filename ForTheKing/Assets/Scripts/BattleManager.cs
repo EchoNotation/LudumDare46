@@ -29,7 +29,7 @@ public class BattleManager : MonoBehaviour
     int maxNumberOfTurns = 30;
     int turnNumber = 1;
     int empty = -1;
-    int passable = 0;
+    public int passable = 0;
     int wall = 1;
     int king = 2;
     int knight = 3;
@@ -58,7 +58,7 @@ public class BattleManager : MonoBehaviour
         readTiles();
         controllableUnits = GameObject.FindGameObjectsWithTag("Unit");
         assassins = GameObject.FindGameObjectsWithTag("Assassin");
-        civilians = GameObject.FindGameObjectsWithTag("Civillian");
+        civilians = GameObject.FindGameObjectsWithTag("Civilian");
         unitPositions = new Vector3[maxNumberOfTurns][];
         assassinPositions = new Vector3[maxNumberOfTurns][];
         civilianPositions = new Vector3[maxNumberOfTurns][];
@@ -178,7 +178,8 @@ public class BattleManager : MonoBehaviour
         }
         else if(shoved.CompareTag("Civilian"))
         {
-
+            startX = shoved.GetComponent<Civilian>().gridX;
+            startY = shoved.GetComponent<Civilian>().gridY;
         }
 
         int shovedType = board[startX][startY];
@@ -231,7 +232,8 @@ public class BattleManager : MonoBehaviour
         }
         else if (shoved.CompareTag("Civilian"))
         {
-
+            shoved.GetComponent<Civilian>().gridX = endX;
+            shoved.GetComponent<Civilian>().gridY = endY;
         }
 
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
