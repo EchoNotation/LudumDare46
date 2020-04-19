@@ -87,8 +87,7 @@ public class BattleManager : MonoBehaviour
         }
 
         readUnits();
-        //printBoard();
-        printBoardIndicies();
+        //printBoardIndicies();
         cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
 
         for(int i = 0; i < controllableUnits.Length; i++)
@@ -561,8 +560,6 @@ public class BattleManager : MonoBehaviour
             civilianGridSpaces[id][i] = new Vector2Int(tempX, tempY);
         }
 
-        //savedBoards[id] = board.Clone() as int[][];
-
         for(int i = 0; i < gridSize; i++)
         {
             for(int j = 0; j < gridSize; j++)
@@ -603,7 +600,7 @@ public class BattleManager : MonoBehaviour
         for(int i = 0; i < civilians.Length; i++)
         {
             civilians[i].transform.position = civilianPositions[id][i];
-            Vector2Int temp3 = assassinGridSpaces[id][i];
+            Vector2Int temp3 = civilianGridSpaces[id][i];
             civilians[i].GetComponent<Civilian>().gridX = temp3.x;
             civilians[i].GetComponent<Civilian>().gridY = temp3.y;
         }
