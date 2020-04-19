@@ -38,7 +38,7 @@ public class BattleManager : MonoBehaviour
     int noble = 5;
     int civilian = 6;
     int assassin = 7;
-    public int gridSize = 10;
+    public const int gridSize = 10;
 
     public GameObject assassinMarker;
     public GameObject gold;
@@ -107,7 +107,7 @@ public class BattleManager : MonoBehaviour
         }
 
         readUnits();
-        //printBoardIndicies();
+        printBoardIndicies();
         cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
 
         for(int i = 0; i < controllableUnits.Length; i++)
@@ -1028,7 +1028,6 @@ public class BattleManager : MonoBehaviour
     {
         if (id < 0 || id >= 30) return;
 
-        int gridSize = tiles.size.y;
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
 
         for (int i = 0; i < controllableUnits.Length; i++)
@@ -1064,10 +1063,16 @@ public class BattleManager : MonoBehaviour
             civilianGridSpaces[id][i] = new Vector2Int(tempX, tempY);
         }
 
+        //printBoardIndicies();
+
+        //Debug.Log(gridSize);
+
         for(int i = 0; i < gridSize; i++)
         {
             for(int j = 0; j < gridSize; j++)
             {
+                //Debug.Log("ID: " + id + " I: " + i + " J: " + j);
+
                 savedBoards[id][i][j] = board[i][j];
             }
         }
@@ -1410,12 +1415,12 @@ public class BattleManager : MonoBehaviour
                 TileBase currentTile = tiles.GetTile(new Vector3Int(j, i, 0));
                 int current = -1;
 
-                switch(currentTile.name)
+                switch(currentTile.name.Substring(0, 4))
                 {
                     case "Wall":
                         current = wall;
                         break;
-                    case "Floor":
+                    case "Flor":
                         current = passable;
                         break;
                     default:

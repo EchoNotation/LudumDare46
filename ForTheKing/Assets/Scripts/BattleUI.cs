@@ -49,7 +49,7 @@ public class BattleUI : MonoBehaviour
     {
         battleManager = FindObjectOfType<BattleManager>();
         optionCanvas.enabled = false;
-        gridSize = battleManager.gridSize;
+        gridSize = BattleManager.gridSize;
     }
 
     // Update is called once per frame
