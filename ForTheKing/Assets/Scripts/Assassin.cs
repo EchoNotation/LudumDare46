@@ -9,6 +9,11 @@ public class Assassin : MonoBehaviour
     public int gridY = 0;
     private GameObject king;
 
+    public int speed = 2;
+
+    public Vector2Int[] desiredPath;
+    public Vector2Int[] nextTurnPath;
+
     // Start is called before the first frame update
     void Start()
     {

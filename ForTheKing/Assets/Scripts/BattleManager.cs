@@ -142,13 +142,22 @@ public class BattleManager : MonoBehaviour
         {
             Assassin script = assassins[i].GetComponent<Assassin>();
             Vector2Int pos = new Vector2Int(script.gridX - gridSize/2, script.gridY - gridSize/2);
-            Vector2Int[] path = findPathTo(pos, kingPos);
+            Vector2Int[] fullPath = findPathTo(pos, kingPos);
 
-            if (path != null)
+            if (fullPath != null)
             {
-                for (int j = 0; j < path.Length; j++)
+                script.desiredPath = fullPath;
+
+                //get first script.speed elements of the path to the king
+                Vector2Int[] currentPath = new Vector2Int[script.speed + 1];
+                for(int j = 0; j < script.speed + 1 && j < fullPath.Length; j++)
                 {
-                    FindObjectOfType<BattleUI>().createMarkerAtTile(path[j], assassinMarker);
+                    currentPath[j] = fullPath[j];
+                }
+                
+                for (int j = 1; j < currentPath.Length; j++)
+                {
+                    FindObjectOfType<BattleUI>().createMarkerAtTile(currentPath[j], assassinMarker);
                 }
             }
             else Debug.LogWarning("TODO implement when assassin has no path to king");
@@ -609,6 +618,7 @@ public class BattleManager : MonoBehaviour
     
     void assassinTurn()
     {
+
         
     }
 
