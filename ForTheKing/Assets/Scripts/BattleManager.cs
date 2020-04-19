@@ -202,81 +202,73 @@ public class BattleManager : MonoBehaviour
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(0, 1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
-                        break; 
                     }
 
                     //check stab up left
-                    if(isStabbable(currentPath[j] + new Vector2Int(-1,0)))
+                    else if(isStabbable(currentPath[j] + new Vector2Int(-1,0)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, 0));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
-                        break; 
                     }
 
                     //check stab up right
-                    if(isStabbable(currentPath[j] + new Vector2Int(1,1)))
+                    else if(isStabbable(currentPath[j] + new Vector2Int(1,1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, 1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
-                        break; 
                     }
 
                     //check stab right
-                    if(isStabbable(currentPath[j] + new Vector2Int(1,0)))
+                    else if(isStabbable(currentPath[j] + new Vector2Int(1,0)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, 0));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
-                        break; 
                     }
 
                     //check stab left
-                    if(isStabbable(currentPath[j] + new Vector2Int(-1,0)))
+                    else if(isStabbable(currentPath[j] + new Vector2Int(-1,0)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, 0));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
-                        break; 
                     }
 
                     //check stab down left
-                    if(isStabbable(currentPath[j] + new Vector2Int(-1,-1)))
+                    else if(isStabbable(currentPath[j] + new Vector2Int(-1,-1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, -1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
-                        break; 
                     }
 
                     //check stab down right
-                    if(isStabbable(currentPath[j] + new Vector2Int(1,-1)))
+                    else if(isStabbable(currentPath[j] + new Vector2Int(1,-1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, -1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
-                        break; 
                     }
 
                     //check stab down
-                    if(isStabbable(currentPath[j] + new Vector2Int(0,-1)))
+                    else if(isStabbable(currentPath[j] + new Vector2Int(0,-1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(0, -1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
-                        break; 
                     }
 
                     //if no one to stab, keep walking towards king
-                    if(script.endAction != Assassin.EndAction.STAB && Vector2Int.Distance(currentPath[i], kingPos) < script.range)
+                    else if(script.endAction != Assassin.EndAction.STAB && Vector2Int.Distance(currentPath[i], kingPos) < script.range)
                     {
                         //if good distance, check sightline for wall
                         RaycastHit2D hit = lineOfSight(assassins[i], kingObj);
@@ -331,11 +323,11 @@ public class BattleManager : MonoBehaviour
         for(int i = 0; i < controllableUnits.Length; i++)
         {
             ControllableUnit script = controllableUnits[i].GetComponent<ControllableUnit>();
-            //TODO check if alive
+            if (!script.isAlive) continue;
             //are they standing in that position 
             if(script.gridX == gridX && script.gridY == gridY)
             {
-                Debug.Log("found game object with unit ID: " + script.unitID);
+                //Debug.Log("found game object with unit ID: " + script.unitID);
                 return script.gameObject;
             }
         }
@@ -344,11 +336,11 @@ public class BattleManager : MonoBehaviour
         for(int i = 0; i < civilians.Length; i++)
         {
             Civilian script = civilians[i].GetComponent<Civilian>();
-            //TODO check if alive
+            if (!script.isAlive) continue;
             //are they standing in that position 
             if(script.gridX == gridX && script.gridY == gridY)
             {
-                Debug.Log("found game object civilian");
+                //Debug.Log("found game object civilian");
                 return script.gameObject;
             }
         }
@@ -362,7 +354,6 @@ public class BattleManager : MonoBehaviour
         ControllableUnit script = moving.GetComponent<ControllableUnit>();
 
         //Debug.Log("moveToPosition");
-        //TODO have battle UI deal with it
         if (script.hasMoved) return;
 
         //update board (old and new spaces)
@@ -399,6 +390,9 @@ public class BattleManager : MonoBehaviour
         //move prefab to correct location
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
         moving.transform.position = tiles.CellToWorld(new Vector3Int((int)newPos.x, (int)newPos.y, 0)) + offset;
+
+        //update assassin plans
+        predictAssassinMove();
     }
 
     public void shove(GameObject shoved, Direction dir)
@@ -473,6 +467,8 @@ public class BattleManager : MonoBehaviour
 
         Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
         shoved.transform.position = tiles.CellToWorld(new Vector3Int((int)endX - (gridSize / 2), (int)endY - (gridSize / 2), 0)) + offset;
+
+        predictAssassinMove();
     }
 
     public void tossCoin(Vector2Int pos)
@@ -565,8 +561,6 @@ public class BattleManager : MonoBehaviour
             if (current_node.g > radius) continue;
 
             //generate children for all 8 directions
-            //TODO if contained in open, check if smaller or greater value of g
-
             List<Node> children = new List<Node>();
 
             Node upLeft = createChildIfValid(current_node, -1, 1);
@@ -1051,6 +1045,7 @@ public class BattleManager : MonoBehaviour
             Vector2Int temp = unitGridSpaces[id][i];
             controllableUnits[i].GetComponent<ControllableUnit>().isAlive = unitStatuses[id][i];
             controllableUnits[i].GetComponent<SpriteRenderer>().enabled = unitStatuses[id][i];
+            controllableUnits[i].GetComponent<BoxCollider2D>().enabled = unitStatuses[id][i];
             controllableUnits[i].GetComponent<ControllableUnit>().gridX = temp.x;
             controllableUnits[i].GetComponent<ControllableUnit>().gridY = temp.y;
         }
@@ -1061,6 +1056,7 @@ public class BattleManager : MonoBehaviour
             Vector2Int temp2 = assassinGridSpaces[id][i];
             assassins[i].GetComponent<Assassin>().isAlive = assassinStatuses[id][i];
             assassins[i].GetComponent<SpriteRenderer>().enabled = assassinStatuses[id][i];
+            assassins[i].GetComponent<BoxCollider2D>().enabled = assassinStatuses[id][i];
             assassins[i].GetComponent<Assassin>().gridX = temp2.x;
             assassins[i].GetComponent<Assassin>().gridY = temp2.y;
         }
@@ -1071,6 +1067,7 @@ public class BattleManager : MonoBehaviour
             Vector2Int temp3 = civilianGridSpaces[id][i];
             civilians[i].GetComponent<Civilian>().isAlive = civilianStatuses[id][i];
             civilians[i].GetComponent<SpriteRenderer>().enabled = civilianStatuses[id][i];
+            civilians[i].GetComponent<BoxCollider>().enabled = civilianStatuses[id][i];
             civilians[i].GetComponent<Civilian>().gridX = temp3.x;
             civilians[i].GetComponent<Civilian>().gridY = temp3.y;
         }
@@ -1224,6 +1221,8 @@ public class BattleManager : MonoBehaviour
                 //stab the person
                 script.target.GetComponent<SpriteRenderer>().enabled = false;
 
+                script.target.GetComponent<BoxCollider2D>().enabled = false;
+
                 //remove them from board
                 if (script.target.tag == "Unit")
                 {
@@ -1257,15 +1256,46 @@ public class BattleManager : MonoBehaviour
                 moveAssassin(assassins[i], script.nextTurnPath[script.nextTurnPath.Length - 1]);
 
                 //aim bow
-                Debug.Log("aim!");
+                Debug.Log("fire!");
+
+ 
+                //stab the person
+                script.target.GetComponent<SpriteRenderer>().enabled = false;
+
+                //remove them from board
+                if (script.target.tag == "Unit")
+                {
+                    ControllableUnit control = script.target.GetComponent<ControllableUnit>();
+
+                    control.isAlive = false;
+
+                    board[gridSize - 1 - control.gridY][control.gridX] = passable;
+                }
+                else if (script.target.tag == "Civilian")
+                {
+                    Civilian civ = script.target.GetComponent<Civilian>();
+
+                    civ.isAlive = false;
+
+                    board[gridSize - 1 - civ.gridY][civ.gridX] = passable;
+                }
+                else if (script.target.tag == "King")
+                {
+                    King kingScript = script.target.GetComponent<King>();
+
+                    // kill king
+                    //TODO implement game over
+                    Debug.Log("The king is dead");
+                }
+                else Debug.LogError("assassin " + i + " has unidentified target! can't kill!");
 
             }
-            else if (script.endAction == Assassin.EndAction.FIRE)
-            {
+            //else if (script.endAction == Assassin.EndAction.FIRE)
+            //{
                 //fire bow towards direction of original aiming, killing who it hits
 
-                Debug.Log("fire!");
-            }
+            //    Debug.Log("fire!");
+            //}
             else if (script.endAction == Assassin.EndAction.IDLE)
             {
                 //just "walk" to end of path
