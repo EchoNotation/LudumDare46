@@ -180,7 +180,7 @@ public class BattleUI : MonoBehaviour
                 //forward to battle manager
                 battleManager.moveToPosition(currentlySelected, new Vector2(x, y));
 
-                //currentlySelected.GetComponent<ControllableUnit>().hasMoved = true;
+                currentlySelected.GetComponent<ControllableUnit>().hasMoved = true;
 
                 removeMoveMarkers();
 
