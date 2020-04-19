@@ -445,11 +445,14 @@ public class BattleManager : MonoBehaviour
 
     public void tossCoin(Vector2Int pos)
     {
-        goldGridPos[turnNumber] = new Vector2Int(pos.x, pos.y);
+        if (goldExists[turnNumber]) return;
+
+        goldGridPos[turnNumber] = new Vector2Int(pos.x + 5, pos.y + 5);
         goldExists[turnNumber] = true;
         //Enable/instantiate Gold prefab
+        Debug.Log("SpawningGold!");
     }
-
+    
     public void taunt()
     {
 
@@ -808,8 +811,8 @@ public class BattleManager : MonoBehaviour
     public void commit()
     {
         //Finalizes everything, lets Assassins take their turn.
-        civilianTurn();
         assassinTurn();
+        civilianTurn();
         turnsToSurvive--;
 
         if(turnsToSurvive <= 0)
@@ -940,6 +943,7 @@ public class BattleManager : MonoBehaviour
             controllableUnits[i].transform.position = unitPositions[id][i];
             Vector2Int temp = unitGridSpaces[id][i];
             controllableUnits[i].GetComponent<ControllableUnit>().isAlive = unitStatuses[id][i];
+            controllableUnits[i].GetComponent<SpriteRenderer>().enabled = unitStatuses[id][i];
             controllableUnits[i].GetComponent<ControllableUnit>().gridX = temp.x;
             controllableUnits[i].GetComponent<ControllableUnit>().gridY = temp.y;
         }
@@ -949,6 +953,7 @@ public class BattleManager : MonoBehaviour
             assassins[i].transform.position = assassinPositions[id][i];
             Vector2Int temp2 = assassinGridSpaces[id][i];
             assassins[i].GetComponent<Assassin>().isAlive = assassinStatuses[id][i];
+            assassins[i].GetComponent<SpriteRenderer>().enabled = assassinStatuses[id][i];
             assassins[i].GetComponent<Assassin>().gridX = temp2.x;
             assassins[i].GetComponent<Assassin>().gridY = temp2.y;
         }
@@ -958,6 +963,7 @@ public class BattleManager : MonoBehaviour
             civilians[i].transform.position = civilianPositions[id][i];
             Vector2Int temp3 = civilianGridSpaces[id][i];
             civilians[i].GetComponent<Civilian>().isAlive = civilianStatuses[id][i];
+            civilians[i].GetComponent<SpriteRenderer>().enabled = civilianStatuses[id][i];
             civilians[i].GetComponent<Civilian>().gridX = temp3.x;
             civilians[i].GetComponent<Civilian>().gridY = temp3.y;
         }
@@ -977,11 +983,17 @@ public class BattleManager : MonoBehaviour
                 int origX = civilians[i].GetComponent<Civilian>().gridX;
                 int origY = civilians[i].GetComponent<Civilian>().gridY;
 
-                Vector2Int[] pathToGold = findPathTo(new Vector2Int(origX, origY), goldGridPos[turnNumber]);
-                
+                Debug.Log("CivPos: " + origX + " " + origY);
+                Debug.Log("GoldPos: " + goldGridPos[turnNumber].x + " " + goldGridPos[turnNumber].y);
+
+                Vector2Int[] pathToGold = findPathClosest(1, new Vector2Int(origX - 5, origY - 5), new Vector2Int(goldGridPos[turnNumber].x - 5, goldGridPos[turnNumber].y - 5));
+
+                if (pathToGold == null) continue;
+
                 if(pathToGold.Length > 1)
                 {
                     //Need to try to move closer to gold.
+                    moveCivilian(civilians[i], new Vector2Int(pathToGold[1].x + 5, pathToGold[1].y + 5));
                 }
                 else
                 {
@@ -995,7 +1007,7 @@ public class BattleManager : MonoBehaviour
 
                 for(int j = 0; j < assassins.Length; j++)
                 {
-                    if (!assassins[i].GetComponent<Assassin>().isAlive) continue;
+                    if (!assassins[j].GetComponent<Assassin>().isAlive) continue;
                     RaycastHit2D hit = lineOfSight(civilians[i], assassins[j]);
                     
                     if(hit.collider.CompareTag("Assassin"))
