@@ -71,7 +71,7 @@ public class ControllableUnit : MonoBehaviour
                 Debug.Log("testing to " + dest + "an offset of " + offset);
                 int dist = bmanager.pathDistance(current, dest);
                 if (dist == -1) continue;
-                if (true /* dist <= speed */)
+                if (dist <= speed + 1)
                 {
                     moveablePositions.Add(dest);
                     Debug.Log("can move to " + dest);
