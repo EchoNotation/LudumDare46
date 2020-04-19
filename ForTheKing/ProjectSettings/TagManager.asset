@@ -11,6 +11,7 @@ TagManager:
   - Civilian
   - MoveMarker
   - AssassinMoveMarker
+  - Audio
   layers:
   - Default
   - TransparentFX
