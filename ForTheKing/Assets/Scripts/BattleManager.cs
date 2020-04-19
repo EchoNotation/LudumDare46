@@ -1113,7 +1113,13 @@ public class BattleManager : MonoBehaviour
 
                 Vector2Int[] pathToGold = findPathClosest(1, new Vector2Int(origX - 5, origY - 5), new Vector2Int(goldGridPos[turnNumber].x - 5, goldGridPos[turnNumber].y - 5));
 
-                if (pathToGold == null) continue;
+                Debug.Log("PathLength: " + pathToGold.Length);
+
+                if (pathToGold == null)
+                {
+                    Debug.Log("No possible path!");
+                    continue;
+                }
 
                 Debug.Log("Distance to gold: " + pathToGold.Length);
 
