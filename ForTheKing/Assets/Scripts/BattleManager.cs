@@ -335,7 +335,7 @@ public class BattleManager : MonoBehaviour
         int boardSquareID = board[Mathf.Abs(dest.y - 4)][dest.x + gridSize/2];
         if(boardSquareID != passable)
         {
-            Debug.Log("Can't Pathfind: end is not passable");
+            //Debug.Log("Can't Pathfind: end is not passable");
             return null;
         }
 
@@ -515,6 +515,7 @@ public class BattleManager : MonoBehaviour
 
     public void restartTurn()
     {
+        resetActions();
         loadBoard(turnNumber);
     }
 
@@ -712,6 +713,15 @@ public class BattleManager : MonoBehaviour
         saveBoard(turnNumber);
     }
 
+    public void resetActions()
+    {
+        for(int i = 0; i < controllableUnits.Length; i++)
+        {
+            controllableUnits[i].GetComponent<ControllableUnit>().hasMoved = false;
+            controllableUnits[i].GetComponent<ControllableUnit>().hasTakenAction = false;
+        }
+    }
+
     void printBoard()
     {
         for(int i = gridSize - 1; i > 0; i--)
@@ -728,7 +738,7 @@ public class BattleManager : MonoBehaviour
     void printBoardIndicies()
     {
         string fullRes = " 0123456789\n";
-        Debug.Log("Length: " + board.Length);
+        //Debug.Log("Length: " + board.Length);
         for(int i = 0; i < board.Length; i++)
         {
             string res = i + " ";

@@ -54,6 +54,7 @@ public class BattleUI : MonoBehaviour
     {
         unSelect();
 
+        battleManager.resetActions();
         battleManager.rewind();
     }
 
@@ -61,6 +62,7 @@ public class BattleUI : MonoBehaviour
     {
         unSelect();
 
+        battleManager.resetActions();
         battleManager.commit();
     }
 
@@ -197,7 +199,10 @@ public class BattleUI : MonoBehaviour
                 //Check if valid move
 
                 battleManager.tossCoin(new Vector2Int(x, y));
-                currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+
+                if(!debugUnlimitedMovement)
+                    currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+
                 unSelect();              
             }
         }
@@ -293,13 +298,16 @@ public class BattleUI : MonoBehaviour
 
                     int[][] tempBoard = battleManager.getBoard();
 
-                    Debug.Log("TargetI: " + (iCoord) + " TargetJ: " + jCoord);
+                    //Debug.Log("TargetI: " + (iCoord) + " TargetJ: " + jCoord);
 
                     if(tempBoard[iCoord][jCoord] == battleManager.passable)
                     {
-                        Debug.Log("BoardSpace: " + tempBoard[iCoord][jCoord]);
+                        //Debug.Log("BoardSpace: " + tempBoard[iCoord][jCoord]);
                         battleManager.shove(clicked, shoveDir);
-                        //currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+                        
+                        if(!debugUnlimitedMovement)
+                            currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+
                         unSelect();
                     }                  
                 }
@@ -312,7 +320,9 @@ public class BattleUI : MonoBehaviour
                 {
                     //Taunt the assassin
 
-                    currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+                    if(!debugUnlimitedMovement)
+                        currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
+
                     unSelect();
                 }
             }
