@@ -492,6 +492,7 @@ public class BattleManager : MonoBehaviour
 
     public void restartTurn()
     {
+        resetActions();
         loadBoard(turnNumber);
     }
 
@@ -687,6 +688,15 @@ public class BattleManager : MonoBehaviour
         board[(gridSize - 1) - kingY][kingX] = king;
 
         saveBoard(turnNumber);
+    }
+
+    public void resetActions()
+    {
+        for(int i = 0; i < controllableUnits.Length; i++)
+        {
+            controllableUnits[i].GetComponent<ControllableUnit>().hasMoved = false;
+            controllableUnits[i].GetComponent<ControllableUnit>().hasTakenAction = false;
+        }
     }
 
     void printBoard()
