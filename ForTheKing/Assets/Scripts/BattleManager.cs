@@ -270,7 +270,7 @@ public class BattleManager : MonoBehaviour
                     }
 
                     //if no one to stab, keep walking towards king
-                    else if(script.endAction != Assassin.EndAction.STAB && Vector2Int.Distance(currentPath[i], kingPos) <= script.range)
+                    else if(script.endAction != Assassin.EndAction.STAB && Vector2Int.Distance(currentPath[j], kingPos) <= script.range)
                     {
                         Debug.Log("not stabbing and in shooting range");
                         //if good distance, check sightline for wall
@@ -943,6 +943,10 @@ public class BattleManager : MonoBehaviour
 
         battleUI.nextTurnButton.interactable = true;
 
+        kingObj.GetComponent<King>().isAlive = true;
+        kingObj.GetComponent<BoxCollider2D>().enabled = true;
+        kingObj.GetComponent<SpriteRenderer>().enabled = true;
+
         goldExists[turnNumber + 1] = false;
 
         if(goldWasPlacedThisTurn[turnNumber])
@@ -978,6 +982,10 @@ public class BattleManager : MonoBehaviour
         loadBoard(turnNumber);
 
         battleUI.nextTurnButton.interactable = true;
+
+        kingObj.GetComponent<King>().isAlive = true;
+        kingObj.GetComponent<BoxCollider2D>().enabled = true;
+        kingObj.GetComponent<SpriteRenderer>().enabled = true;
 
         if(goldWasPlacedThisTurn[turnNumber])
         {
