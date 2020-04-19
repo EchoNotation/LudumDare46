@@ -46,8 +46,10 @@ public class BattleManager : MonoBehaviour
 
     public Text cavalryText;
     public int turnsToSurvive;
-    private bool[] goldExists;
+    public bool[] goldExists;
     private Vector2Int[] goldGridPos;
+    private bool[] goldWasPlacedThisTurn;
+    private bool removedGold;
     private int civilianSpeed = 2;
 
     //Vector2Int[] debugPath;
@@ -76,6 +78,7 @@ public class BattleManager : MonoBehaviour
         unitGridSpaces = new Vector2Int[maxNumberOfTurns][];
         assassinGridSpaces = new Vector2Int[maxNumberOfTurns][];
         civilianGridSpaces = new Vector2Int[maxNumberOfTurns][];
+        goldWasPlacedThisTurn = new bool[maxNumberOfTurns];
         savedBoards = new int[maxNumberOfTurns][][];
         unitStatuses = new bool[maxNumberOfTurns][];
         assassinStatuses = new bool[maxNumberOfTurns][];
@@ -474,12 +477,19 @@ public class BattleManager : MonoBehaviour
 
     public void tossCoin(Vector2Int pos)
     {
-        if (goldExists[turnNumber]) return;
+        if (goldExists[turnNumber]) {
+            Debug.Log("Gold already exists! No more can be spawned!");
+            return;
+        }
 
+        goldWasPlacedThisTurn[turnNumber] = true;
         goldGridPos[turnNumber] = new Vector2Int(pos.x + 5, pos.y + 5);
         goldExists[turnNumber] = true;
         //Enable/instantiate Gold prefab
-        Debug.Log("SpawningGold!");
+        //Debug.Log("SpawningGold!");
+
+        Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
+        GameObject.Find("Gold").transform.position = tiles.CellToWorld(new Vector3Int((int)(pos.x + 5) - (gridSize / 2), (int)(pos.y + 5) - (gridSize / 2), 0)) + offset;
     }
     
     public void taunt()
@@ -872,6 +882,18 @@ public class BattleManager : MonoBehaviour
             }
         }
 
+        if(removedGold)
+        {
+            goldExists[turnNumber + 1] = false;
+            goldGridPos[turnNumber + 1] = new Vector2Int();
+            GameObject.Find("Gold").transform.position = new Vector3(-15, 0, 0);             
+        }
+        else
+        {
+            goldExists[turnNumber + 1] = true;
+            goldGridPos[turnNumber + 1] = goldGridPos[turnNumber];
+        }
+
         turnNumber++;
         saveBoard(turnNumber);
 
@@ -885,6 +907,23 @@ public class BattleManager : MonoBehaviour
         loadBoard(turnNumber);
         turnsToSurvive++;
         cavalryText.text = "Cavalry arrive in " + turnsToSurvive + " turns!";
+
+        goldExists[turnNumber + 1] = false;
+
+        if(goldWasPlacedThisTurn[turnNumber])
+        {
+            goldExists[turnNumber] = false;
+            GameObject.Find("Gold").transform.position = new Vector3(-15, 0, 0);
+        }
+        else if(goldExists[turnNumber])
+        {
+            Vector3 offset = new Vector3(tiles.cellSize.x / 2, tiles.cellSize.x / 2, -1);
+            GameObject.Find("Gold").transform.position = tiles.CellToWorld(new Vector3Int((int)(goldGridPos[turnNumber].x) - (gridSize / 2), (int)(goldGridPos[turnNumber].y) - (gridSize / 2), 0)) + offset;
+        }
+        else
+        {
+            GameObject.Find("Gold").transform.position = new Vector3(-15, 0, 0);
+        }
 
         for(int i = 0; i < assassins.Length; i++)
         {
@@ -902,6 +941,12 @@ public class BattleManager : MonoBehaviour
     {
         resetActions();
         loadBoard(turnNumber);
+
+        if(goldWasPlacedThisTurn[turnNumber])
+        {
+            goldExists[turnNumber] = false;
+            GameObject.Find("Gold").transform.position = new Vector3(-15, 0, 0);
+        }
 
         for(int i = 0; i < assassins.Length; i++)
         {
@@ -1083,6 +1128,8 @@ public class BattleManager : MonoBehaviour
 
                     for (int k = 0; k < possibleArray.Length; k++)
                     {
+                        if (board[(gridSize - 1) - possibleArray[k].y][possibleArray[k].x] != passable) continue;
+
                         Vector2Int temp = possibleArray[k];
                         Vector3 tempWorldPos3D = tiles.CellToWorld(new Vector3Int(temp.x - gridSize / 2, temp.y - gridSize / 2, 0)) + offset;
                         Vector2 rayOrigin = new Vector2(tempWorldPos3D.x, tempWorldPos3D.y);
@@ -1113,8 +1160,7 @@ public class BattleManager : MonoBehaviour
             if(Mathf.Abs(civX - goldGridPos[turnNumber].x) <= 1 && Mathf.Abs(civY - goldGridPos[turnNumber].y) <= 1)
             {
                 //Civilian is adjacent to the gold!
-                goldExists[turnNumber] = false;
-                goldGridPos[turnNumber] = new Vector2Int();
+                removedGold = true;
                 //TODO: Disable/remove Gold gameobject.
                 break;
             }
