@@ -357,7 +357,7 @@ public class BattleUI : MonoBehaviour
 
     public void unSelect()
     {
-        currentlySelected.GetComponent<ControllableUnit>().moveablePositions.Clear();
+        if(currentlySelected != null) currentlySelected.GetComponent<ControllableUnit>().moveablePositions.Clear();
         removeMoveMarkers();
         currentlySelected = null;
         hasSelection = false;
