@@ -28,7 +28,7 @@ public class BattleManager : MonoBehaviour
     Vector2Int[][] unitGridSpaces, assassinGridSpaces, civilianGridSpaces;
     bool[][] unitStatuses, assassinStatuses, civilianStatuses;
     int maxNumberOfTurns = 30;
-    int turnNumber = 1;
+    public int turnNumber = 1;
     int empty = -1;
     public int passable = 0;
     int wall = 1;
@@ -50,7 +50,7 @@ public class BattleManager : MonoBehaviour
     public Text cavalryText;
     public int turnsToSurvive;
 
-    private bool[] goldExists;
+    public bool[] goldExists;
     private Vector2Int[] goldTilePos;
     private bool[] goldWasPlacedThisTurn;
 
@@ -1133,19 +1133,19 @@ public class BattleManager : MonoBehaviour
                 int origX = civilians[i].GetComponent<Civilian>().gridX;
                 int origY = civilians[i].GetComponent<Civilian>().gridY;
 
-                Debug.Log("CivPos: " + origX + " " + origY);
+                //Debug.Log("CivPos: " + origX + " " + origY);
 
                 Vector2Int[] pathToGold = findPathClosest(1, new Vector2Int(origX - 5, origY - 5), new Vector2Int(goldTilePos[turnNumber].x, goldTilePos[turnNumber].y));
 
-                Debug.Log("PathLength: " + pathToGold.Length);
+                //Debug.Log("PathLength: " + pathToGold.Length);
 
                 if (pathToGold == null)
                 {
-                    Debug.Log("No possible path!");
+                    //Debug.Log("No possible path!");
                     continue;
                 }
 
-                Debug.Log("Distance to gold: " + pathToGold.Length);
+                //Debug.Log("Distance to gold: " + pathToGold.Length);
 
                 if(pathToGold.Length > 1)
                 {

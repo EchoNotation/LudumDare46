@@ -1146,6 +1146,14 @@ PrefabInstance:
       propertyPath: nextTurnButton
       value: 
       objectReference: {fileID: 1874636541}
+    - target: {fileID: 481920582, guid: 42b9a37b5c98b374cb637204aacca756, type: 3}
+      propertyPath: rewindButton
+      value: 
+      objectReference: {fileID: 1094850339}
+    - target: {fileID: 481920582, guid: 42b9a37b5c98b374cb637204aacca756, type: 3}
+      propertyPath: specialButton
+      value: 
+      objectReference: {fileID: 1562163507}
     - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
       propertyPath: tiles
@@ -1156,6 +1164,11 @@ PrefabInstance:
       propertyPath: cavalryText
       value: 
       objectReference: {fileID: 547771272}
+    - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
+        type: 3}
+      propertyPath: gold
+      value: 
+      objectReference: {fileID: 1844179749}
     - target: {fileID: 2928117637307730891, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
       propertyPath: m_Name
@@ -3797,6 +3810,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 41bf0dc7792f2294caf48ed3c9f41d3a, type: 3}
+--- !u!1 &1844179749 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4395645062200859146, guid: 41bf0dc7792f2294caf48ed3c9f41d3a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1789313083}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1874636539
 GameObject:
   m_ObjectHideFlags: 0
