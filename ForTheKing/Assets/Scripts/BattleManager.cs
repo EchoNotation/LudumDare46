@@ -75,6 +75,13 @@ public class BattleManager : MonoBehaviour
             unitGridSpaces[i] = new Vector2Int[controllableUnits.Length];
             assassinGridSpaces[i] = new Vector2Int[assassins.Length];
             civilianGridSpaces[i] = new Vector2Int[civilians.Length];
+
+            savedBoards[i] = new int[gridSize][];
+
+            for(int j = 0; j < gridSize; j++)
+            {
+                savedBoards[i][j] = new int[gridSize];
+            }
         }
 
         readUnits();
@@ -519,14 +526,28 @@ public class BattleManager : MonoBehaviour
             civilianGridSpaces[id][i] = new Vector2Int(tempX, tempY);
         }
 
-        savedBoards[id] = board.Clone() as int[][];
+        //savedBoards[id] = board.Clone() as int[][];
+
+        for(int i = 0; i < gridSize; i++)
+        {
+            for(int j = 0; j < gridSize; j++)
+            {
+                savedBoards[id][i][j] = board[i][j];
+            }
+        }
     }
 
     public void loadBoard(int id)
     {
         if (id < 0 || id >= 30) return;
 
-        board = savedBoards[id].Clone() as int[][];
+        for(int i = 0; i < gridSize; i++)
+        {
+            for(int j = 0; j < gridSize; j++)
+            {
+                board[i][j] = savedBoards[id][i][j];
+            }
+        }
 
         for(int i = 0; i < controllableUnits.Length; i++)
         {
