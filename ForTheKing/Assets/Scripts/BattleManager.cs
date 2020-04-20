@@ -522,10 +522,15 @@ public class BattleManager : MonoBehaviour
     
     public void taunt(GameObject target, GameObject taunter)
     {
-        target.GetComponent<Assassin>().taunter = taunter;
-        target.GetComponent<Assassin>().taunted = true;
+        RaycastHit2D hit = lineOfSight(taunter, target);
+        if(hit.transform.CompareTag("Unit"))
+        {
+            target.GetComponent<Assassin>().taunter = taunter;
+            target.GetComponent<Assassin>().taunted = true;
 
-        predictAssassinMove();
+            predictAssassinMove();
+        }
+
     }
 
     public void block()
@@ -604,25 +609,46 @@ public class BattleManager : MonoBehaviour
             List<Node> children = new List<Node>();
 
             Node upLeft = createChildIfValid(current_node, -1, 1);
-            if (upLeft != null) children.Add(upLeft);
+            if (upLeft != null)
+            {
+                children.Add(upLeft);
+            }
 
             Node upMid = createChildIfValid(current_node, 0, 1);
-            if (upMid != null) children.Add(upMid);
+            if (upMid != null)
+            {
+                children.Add(upMid);
+            }
 
             Node upRight = createChildIfValid(current_node, 1, 1);
-            if (upRight != null) children.Add(upRight);
+            if (upRight != null)
+            {
+                children.Add(upRight);
+            }
 
             Node left = createChildIfValid(current_node, -1, 0);
-            if (left != null) children.Add(left);
+            if (left != null)
+            {
+                children.Add(left);
+            }
 
             Node right = createChildIfValid(current_node, 1, 0);
-            if (right != null) children.Add(right);
+            if (right != null)
+            {
+                children.Add(right);
+            }
 
             Node downLeft = createChildIfValid(current_node, -1, -1);
-            if (downLeft != null) children.Add(downLeft);
+            if (downLeft != null)
+            {
+                children.Add(downLeft);
+            }
 
             Node downMid = createChildIfValid(current_node, 0, -1);
-            if (downMid != null) children.Add(downMid);
+            if (downMid != null)
+            {
+                children.Add(downMid);
+            }
 
             Node downRight = createChildIfValid(current_node, 1, -1);
             if (downRight != null) children.Add(downRight);
@@ -651,7 +677,7 @@ public class BattleManager : MonoBehaviour
                 //check if child is in closed
                 for(int j = 0; j < closed.Count; j++)
                 {
-                    if(children[i].Equals(closed[j]))
+                    if(children[i].x == closed[j].x && children[i].y == closed[j].y)
                     {
                         if(children[i].g < closed[j].g)
                         {
@@ -669,14 +695,17 @@ public class BattleManager : MonoBehaviour
 
         }
 
-        Vector2Int[] pos = new Vector2Int[closed.Count];
-        for(int i = 0; i < pos.Length; i++)
+        List<Vector2Int> temp = new List<Vector2Int>();
+        for(int i = 0; i < closed.Count; i++)
         {
-            if (closed[i].g > radius) continue;
-            pos[i] = new Vector2Int(closed[i].x, closed[i].y);
+            if (closed[i].g > radius)
+            {
+                continue;
+            }
+            temp.Add(new Vector2Int(closed[i].x, closed[i].y));
         }
 
-        return pos;
+        return temp.ToArray();
     }
 
     /*
@@ -751,10 +780,16 @@ public class BattleManager : MonoBehaviour
             }
             
             Node left = createChildIfValid(current_node, -1, 0);
-            if (left != null) children.Add(left);
+            if (left != null)
+            {
+                children.Add(left);
+            }
 
             Node right = createChildIfValid(current_node, 1, 0);
-            if (right != null) children.Add(right);
+            if (right != null)
+            {
+                children.Add(right);
+            }
 
             Node downLeft = createChildIfValid(current_node, -1, -1);
             if (downLeft != null)

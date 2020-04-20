@@ -60,7 +60,12 @@ public class ControllableUnit : MonoBehaviour
 
         BattleManager bmanager = FindObjectOfType<BattleManager>();
 
-        moveablePositions = new List<Vector2Int>(bmanager.passableInRadius(new Vector2Int(gridX - 5, gridY - 5), speed));
+        moveablePositions = new List<Vector2Int>();
+        Vector2Int[] moves = bmanager.passableInRadius(new Vector2Int(gridX - 5, gridY - 5), speed);
+        for(int i = 0; i < moves.Length; i++)
+        {
+            moveablePositions.Add(moves[i]);
+        }
 
         /*
         for(int i = -speed; i <= speed; i++)

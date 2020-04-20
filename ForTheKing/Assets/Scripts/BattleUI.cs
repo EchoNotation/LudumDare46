@@ -274,6 +274,7 @@ public class BattleUI : MonoBehaviour
                 break;
             case ControllableUnit.UnitType.JESTER:
                 currentAction = Action.TAUNT;
+                GameObject.FindGameObjectsWithTag("Assassin");
                 break;
             case ControllableUnit.UnitType.NOBLE:
                 currentAction = Action.COIN;
