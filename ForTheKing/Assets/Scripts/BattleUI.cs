@@ -12,6 +12,9 @@ public class BattleUI : MonoBehaviour
     public GameObject movementMarker;
     public GameObject selectionMarker;
 
+    public GameObject shoveMarker;
+    public GameObject coinMarker;
+
     bool hasSelection = false;
 
     bool awaitingInput = false;
@@ -90,7 +93,7 @@ public class BattleUI : MonoBehaviour
         {
             currentAction = Action.NONE;
             awaitingInput = false;
-            removeMoveMarkers("MoveMarker");
+            removeMarkers("MoveMarker");
 
             return;
         }
@@ -114,7 +117,7 @@ public class BattleUI : MonoBehaviour
         Instantiate(marker, worldPos, Quaternion.identity);
     }
 
-    public void removeMoveMarkers(string tag)
+    public void removeMarkers(string tag)
     {
         GameObject[] markers = GameObject.FindGameObjectsWithTag(tag);
         for(int i = 0; i < markers.Length; i++)
@@ -127,15 +130,126 @@ public class BattleUI : MonoBehaviour
     public void onShoveButton()
     {
         //highlight adjacent units that can be shoved
+        int[][] tempBoard = GetComponent<BattleManager>().getBoard();
+
+        int currentGridX = currentlySelected.GetComponent<ControllableUnit>().gridX;
+        int currentGridY = currentlySelected.GetComponent<ControllableUnit>().gridY;
+
+        GameObject[] civilians = battleManager.civilians;
+        GameObject[] controllableUnits = battleManager.controllableUnits;
+        List<GameObject> adjacentUnits = new List<GameObject>();
+
+        for(int i = 0; i < civilians.Length; i++)
+        {
+            if (!civilians[i].GetComponent<Civilian>().isAlive) continue;
+
+            int tempGridX = civilians[i].GetComponent<Civilian>().gridX;
+            int tempGridY = civilians[i].GetComponent<Civilian>().gridY;
+
+            //Debug.Log("Are we near a civilian?");
+
+            if(Mathf.Abs(currentGridX - tempGridX) <= 1 && Mathf.Abs(currentGridY - tempGridY) <= 1)
+            {
+                //Unit is adjacent!
+                adjacentUnits.Add(civilians[i]);
+            }
+        }
+        
+        for(int i = 0; i < controllableUnits.Length; i++)
+        {
+            if (!controllableUnits[i].GetComponent<ControllableUnit>().isAlive || controllableUnits[i] == currentlySelected) continue;
+
+            int tempGridX = controllableUnits[i].GetComponent<ControllableUnit>().gridX;
+            int tempGridY = controllableUnits[i].GetComponent<ControllableUnit>().gridY;
+
+            //Debug.Log("Are we near a unit?");
+
+            if (Mathf.Abs(currentGridX - tempGridX) <= 1 && Mathf.Abs(currentGridY - tempGridY) <= 1)
+            {
+                //Unit is adjacent!
+                adjacentUnits.Add(controllableUnits[i]);
+            }
+        }
+
+        GameObject[] adjUnitsArray = adjacentUnits.ToArray();
+
+        //Debug.Log("Found " + adjUnitsArray.Length + " adjacent units!");
+
+        for(int i = 0; i < adjUnitsArray.Length; i++)
+        {
+            int shoverX = currentGridX;
+            int shoverY = currentGridY;
+
+            int shovedX = 0;
+            int shovedY = 0;
+            
+            if(adjUnitsArray[i].CompareTag("Unit"))
+            {
+                shovedX = adjUnitsArray[i].GetComponent<ControllableUnit>().gridX;
+                shovedY = adjUnitsArray[i].GetComponent<ControllableUnit>().gridY;
+            }
+            else if (adjUnitsArray[i].CompareTag("Civilian"))
+            {
+                shovedX = adjUnitsArray[i].GetComponent<Civilian>().gridX;
+                shovedY = adjUnitsArray[i].GetComponent<Civilian>().gridY;
+            }
+
+            string shoveString = (shoverX - shovedX) + "" + (shoverY - shovedY);
+
+            int iCoord = (gridSize - 1) - shovedY;
+            int jCoord = shovedX;
+
+            switch (shoveString)
+            {
+                case "-1-1":
+                    iCoord--;
+                    jCoord++;
+                    break;
+                case "-10":
+                    jCoord++;
+                    break;
+                case "-11":
+                    jCoord++;
+                    iCoord++;
+                    break;
+                case "0-1":
+                    iCoord--;
+                    break;
+                case "01":
+                    iCoord++;
+                    break;
+                case "1-1":
+                    iCoord--;
+                    jCoord--;
+                    break;
+                case "10":
+                    jCoord--;
+                    break;
+                case "11":
+                    jCoord--;
+                    iCoord++;
+                    break;
+                case "00":
+                default:
+                    Debug.Log("Invalid shove string in onUnitClick! ShoveString: " + shoveString);
+                    break;
+            }
+
+            //Debug.Log("TargetI: " + (iCoord) + " TargetJ: " + jCoord);
+
+            if (tempBoard[iCoord][jCoord] == battleManager.passable)
+            {
+                //Mark the targetted location!
+                createMarkerAtTile(new Vector2Int(shovedX - 5, shovedY - 5), shoveMarker);
+                //Debug.Log("Found valid location! shovedX: " + shovedX + " shovedY: " + shovedY);
+            }
+        }
 
         //get ready for next unit click to be receiver
         awaitingInput = true;
         currentAction = Action.SHOVE;
 
-        int[][] tempBoard = GetComponent<BattleManager>().getBoard();
-
-        int currentGridX = currentlySelected.GetComponent<ControllableUnit>().gridX;
-        int currentGridY = (gridSize - 1) - currentlySelected.GetComponent<ControllableUnit>().gridY;
+        
         /*Debug.Log("GridX: " + currentGridX + " GridY: " + currentGridY);
         Debug.Log("TL:" + tempBoard[currentGridY - 1][currentGridX - 1]);
         Debug.Log("U:" + tempBoard[currentGridY - 1][currentGridX]);
@@ -201,7 +315,7 @@ public class BattleUI : MonoBehaviour
                 if(!debugUnlimitedMovement)
                     currentlySelected.GetComponent<ControllableUnit>().hasMoved = true;
 
-                removeMoveMarkers("MoveMarker");
+                removeMarkers("MoveMarker");
 
                 unSelect();
             }            
@@ -248,7 +362,7 @@ public class BattleUI : MonoBehaviour
         {
             if(currentAction == Action.MOVE)
             {
-                removeMoveMarkers("MoveMarker");
+                removeMarkers("MoveMarker");
                 unSelect();
 
             }
@@ -373,7 +487,7 @@ public class BattleUI : MonoBehaviour
 
     public void setSelected(GameObject select)
     {
-        removeMoveMarkers("MoveMarker");
+        removeMarkers("MoveMarker");
         currentlySelected = select;
         hasSelection = true;
         awaitingInput = false;
@@ -412,7 +526,8 @@ public class BattleUI : MonoBehaviour
     public void unSelect()
     {
         if(currentlySelected != null) currentlySelected.GetComponent<ControllableUnit>().moveablePositions.Clear();
-        removeMoveMarkers("MoveMarker");
+        removeMarkers("MoveMarker");
+        removeMarkers("ShoveMarker");
         currentlySelected = null;
         hasSelection = false;
         currentAction = Action.NONE;

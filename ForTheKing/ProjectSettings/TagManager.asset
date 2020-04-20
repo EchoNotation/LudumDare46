@@ -13,6 +13,8 @@ TagManager:
   - AssassinMoveMarker
   - Audio
   - Gold
+  - ShoveMarker
+  - CoinMarker
   layers:
   - Default
   - TransparentFX
