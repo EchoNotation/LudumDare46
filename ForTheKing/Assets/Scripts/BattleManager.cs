@@ -19,7 +19,7 @@ public enum Direction
 
 public class BattleManager : MonoBehaviour
 {
-    GameObject[] controllableUnits, assassins, civilians;
+    public GameObject[] controllableUnits, assassins, civilians;
     GameObject kingObj;
     public Tilemap tiles;
     int[][] board;
@@ -178,7 +178,7 @@ public class BattleManager : MonoBehaviour
     //plans assassin moves
     void predictAssassinMove()
     {
-        battleUI.removeMoveMarkers("AssassinMoveMarker");
+        battleUI.removeMarkers("AssassinMoveMarker");
 
         Vector2Int kingPos = new Vector2Int(FindObjectOfType<King>().gridX - gridSize/2, FindObjectOfType<King>().gridY - gridSize/2 + 1);
         for (int i = 0; i < assassins.Length; i++)
@@ -975,7 +975,7 @@ public class BattleManager : MonoBehaviour
         {
             assassins[i].GetComponent<Assassin>().desiredPath = null;
             assassins[i].GetComponent<Assassin>().nextTurnPath = null;
-            battleUI.removeMoveMarkers("AssassinMoveMarker");
+            battleUI.removeMarkers("AssassinMoveMarker");
 
         }
 
@@ -1017,7 +1017,7 @@ public class BattleManager : MonoBehaviour
         {
             assassins[i].GetComponent<Assassin>().desiredPath = null;
             assassins[i].GetComponent<Assassin>().nextTurnPath = null;
-            battleUI.removeMoveMarkers("AssassinMoveMarker");
+            battleUI.removeMarkers("AssassinMoveMarker");
 
         }
         predictAssassinMove();

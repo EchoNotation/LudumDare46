@@ -1447,6 +1447,16 @@ PrefabInstance:
       propertyPath: selectionMarker
       value: 
       objectReference: {fileID: 640212314}
+    - target: {fileID: 481920582, guid: 42b9a37b5c98b374cb637204aacca756, type: 3}
+      propertyPath: shoveMarker
+      value: 
+      objectReference: {fileID: 4016051069038952399, guid: ffc784fb3aa20374f8c3e5dc73b3771c,
+        type: 3}
+    - target: {fileID: 481920582, guid: 42b9a37b5c98b374cb637204aacca756, type: 3}
+      propertyPath: coinMarker
+      value: 
+      objectReference: {fileID: 1189137426499982970, guid: ab33a46bae2b01c47a211d1149ca5465,
+        type: 3}
     - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
       propertyPath: tiles
