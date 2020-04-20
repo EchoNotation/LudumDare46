@@ -186,6 +186,8 @@ public class BattleManager : MonoBehaviour
             Assassin script = assassins[i].GetComponent<Assassin>();
             Vector2Int pos = new Vector2Int(script.gridX - gridSize/2, script.gridY - gridSize/2);
 
+            script.drawingBow = false;
+
             Vector2Int turnTargetPos = new Vector2Int();
             GameObject turnTargetObj = null;
             if(script.taunted)
@@ -311,18 +313,24 @@ public class BattleManager : MonoBehaviour
                             //aim
                             script.endAction = Assassin.EndAction.AIM;
                             script.target = kingObj;
+                            script.drawingBow = true;
+                            break;
                         }
                         else if(hit.collider.tag == "Unit")
                         {
 
                             script.endAction = Assassin.EndAction.AIM;
                             script.target = hit.collider.gameObject;
+                            script.drawingBow = true;
+                            break;
                         }
                         else if(hit.collider.tag == "Civilian")
                         {
 
                             script.endAction = Assassin.EndAction.AIM;
                             script.target = hit.collider.gameObject;
+                            script.drawingBow = true;
+                            break;
                         }
 
                         //if wall, continue walking
@@ -347,6 +355,7 @@ public class BattleManager : MonoBehaviour
     private bool isStabbable(Vector2Int pos)
     {
         int tile = getTileAtSpace(pos);
+        if (tile == knight && gameObjectAtTile(pos).GetComponent<ControllableUnit>().blocking == true) return false;
         return tile == knight || tile == king || tile == civilian || tile == jester || tile == noble;
     }
 
@@ -547,9 +556,13 @@ public class BattleManager : MonoBehaviour
 
     }
 
-    public void block()
+    public void block(GameObject blocker)
     {
+        blocker.GetComponent<ControllableUnit>().blocking = true;
+        blocker.GetComponent<ControllableUnit>().hasMoved = true;
+        blocker.GetComponent<ControllableUnit>().hasTakenAction = true;
 
+        predictAssassinMove();
     }
     
     public RaycastHit2D lineOfSight(GameObject start, GameObject dest)
@@ -1136,6 +1149,13 @@ public class BattleManager : MonoBehaviour
         {
             return null;
         }
+        else if(boardSquareID == knight)
+        {
+            if(gameObjectAtTile(new Vector2Int(child.x, child.y)).GetComponent<ControllableUnit>().blocking)
+            {
+                return null;
+            }
+        }
 
         //safety checks passed
         return child;
@@ -1152,6 +1172,7 @@ public class BattleManager : MonoBehaviour
         assassinTurn();
         civilianTurn();
         turnsToSurvive--;
+
 
         if(!kingObj.GetComponent<King>().isAlive)
         {
@@ -1178,6 +1199,12 @@ public class BattleManager : MonoBehaviour
         saveBoard(turnNumber);
 
         predictAssassinMove();
+
+        for (int i = 0; i < controllableUnits.Length; i++)
+        {
+            controllableUnits[i].GetComponent<ControllableUnit>().blocking = false;
+        }
+
     }
 
     public void rewind()
@@ -1231,6 +1258,12 @@ public class BattleManager : MonoBehaviour
         battleUI.unSelect();
         resetActions();
         loadBoard(turnNumber);
+
+        for(int i = 0; i < assassins.Length; i++)
+        {
+            assassins[i].GetComponent<Assassin>().taunted = false;
+            assassins[i].GetComponent<Assassin>().taunter = null;
+        }
 
         if(goldExists[turnNumber])
         {
@@ -1761,6 +1794,7 @@ public class BattleManager : MonoBehaviour
         {
             controllableUnits[i].GetComponent<ControllableUnit>().hasMoved = false;
             controllableUnits[i].GetComponent<ControllableUnit>().hasTakenAction = false;
+            controllableUnits[i].GetComponent<ControllableUnit>().blocking = false;
         }
 
         predictAssassinMove();

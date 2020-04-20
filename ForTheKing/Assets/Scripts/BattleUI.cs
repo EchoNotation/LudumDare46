@@ -271,6 +271,8 @@ public class BattleUI : MonoBehaviour
         {
             case ControllableUnit.UnitType.KNIGHT:
                 currentAction = Action.BLOCK;
+                battleManager.block(currentlySelected);
+                unSelect();
                 break;
             case ControllableUnit.UnitType.JESTER:
                 currentAction = Action.TAUNT;
