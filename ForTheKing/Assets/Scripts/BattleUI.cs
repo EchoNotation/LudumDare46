@@ -241,7 +241,7 @@ public class BattleUI : MonoBehaviour
             {
                 //Mark the targetted location!
                 createMarkerAtTile(new Vector2Int(shovedX - 5, shovedY - 5), shoveMarker);
-                //Debug.Log("Found valid location! shovedX: " + shovedX + " shovedY: " + shovedY);
+                Debug.Log("Found valid location! shovedX: " + shovedX + " shovedY: " + shovedY);
             }
         }
 
@@ -560,7 +560,7 @@ public class BattleUI : MonoBehaviour
     {
         if(currentlySelected.GetComponent<ControllableUnit>().getUnitType() == ControllableUnit.UnitType.NOBLE)
         {
-            if (goldExists)
+            if (goldExists || currentlySelected.GetComponent<ControllableUnit>().hasTakenAction)
             {
                 specialButton.interactable = false;
             }
