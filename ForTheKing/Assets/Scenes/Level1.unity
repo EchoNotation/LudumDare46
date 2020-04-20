@@ -4316,7 +4316,7 @@ PrefabInstance:
     - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
       propertyPath: turnsToSurvive
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2928117637307730891, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
