@@ -147,16 +147,16 @@ MonoBehaviour:
   - {fileID: 2987635242700459406, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
   - {fileID: 4286834807748677743, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
   bowSprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 7617234944050881767, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 4068270483207909268, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 8744479571966686626, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 1074773923997025061, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 445442371762173339, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 1098025364176818819, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 2903636050776535573, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 2356405306649490839, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 5817171750162842637, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 2311850383102698381, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: 3033157417697851750, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
+  - {fileID: -813741054453250664, guid: e30baee253c187d4388f0d8581bdfe7a, type: 3}
   drawingBow: 0
