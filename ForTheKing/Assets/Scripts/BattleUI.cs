@@ -559,7 +559,7 @@ public class BattleUI : MonoBehaviour
     {
         if(currentlySelected.GetComponent<ControllableUnit>().getUnitType() == ControllableUnit.UnitType.NOBLE)
         {
-            if (goldExists)
+            if (goldExists || currentlySelected.GetComponent<ControllableUnit>().hasTakenAction)
             {
                 specialButton.interactable = false;
             }

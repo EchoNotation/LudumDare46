@@ -1000,6 +1000,7 @@ public class BattleManager : MonoBehaviour
 
     public void restartTurn()
     {
+        battleUI.unSelect();
         resetActions();
         loadBoard(turnNumber);
 
@@ -1167,7 +1168,7 @@ public class BattleManager : MonoBehaviour
 
                 //Debug.Log("CivPos: " + origX + " " + origY);
 
-                Vector2Int[] pathToGold = findPathClosest(1, new Vector2Int(origX - 5, origY - 5), new Vector2Int(goldTilePos[turnNumber].x, goldTilePos[turnNumber].y));
+                Vector2Int[] pathToGold = findPathClosest(0, new Vector2Int(origX - 5, origY - 5), new Vector2Int(goldTilePos[turnNumber].x, goldTilePos[turnNumber].y));
 
                 //Debug.Log("PathLength: " + pathToGold.Length);
 
@@ -1177,7 +1178,7 @@ public class BattleManager : MonoBehaviour
                     continue;
                 }
 
-                //Debug.Log("Distance to gold: " + pathToGold.Length);
+                Debug.Log("Distance to gold: " + pathToGold.Length);
 
                 if(pathToGold.Length > 1)
                 {
