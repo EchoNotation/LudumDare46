@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 6540982789402500497, guid: 1656e75e003f3a64daac4e4ba6ceb077,
+  m_Sprite: {fileID: 2987635242700459406, guid: 1656e75e003f3a64daac4e4ba6ceb077,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -128,7 +128,35 @@ MonoBehaviour:
   isAlive: 1
   target: {fileID: 0}
   taunter: {fileID: 0}
+  taunted: 0
   speed: 2
   range: 5
   desiredPath: []
   nextTurnPath: []
+  sprites:
+  - {fileID: 751151224998498771, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: -4499288319223907064, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: 324317299614373628, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: 9127598421187927406, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: 260384296366699101, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: -712067533415883723, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: 3995426040139115081, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: -4857582374051169124, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: -7358634146570185297, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: 2039336948532588829, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: 2987635242700459406, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  - {fileID: 4286834807748677743, guid: 1656e75e003f3a64daac4e4ba6ceb077, type: 3}
+  bowSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  drawingBow: 0

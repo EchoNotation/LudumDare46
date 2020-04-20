@@ -1,46 +1,82 @@
 fileFormatVersion: 2
-guid: f142dd410f9d24d4f8d3cff9be592beb
+guid: daad091ea7c87fa4b9cb0aa79a368d32
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4144186344876191943
-    second: Noble_FRONT
+      213: -5711848221618334454
+    second: Knight_FRONT
   - first:
-      213: 2942580517593600247
-    second: Noble_0
+      213: -2114218972603513699
+    second: Knight_0
   - first:
-      213: -6490453371604296724
-    second: Noble_1
+      213: -8985680732576350864
+    second: Knight_1
   - first:
-      213: 3831584168726957240
-    second: Noble_2
+      213: 7827260208125532704
+    second: Knight_2
   - first:
-      213: 7191350412620295986
-    second: Noble_3
+      213: 5457420103614929235
+    second: Knight_3
   - first:
-      213: 3666938332067022744
-    second: Noble_4
+      213: 8480205167599975839
+    second: Knight_4
   - first:
-      213: -6647166421407753964
-    second: Noble_5
+      213: 1086178698101399146
+    second: Knight_5
   - first:
-      213: -7505415386692163043
-    second: Noble_6
+      213: 5891436520834976337
+    second: Knight_6
   - first:
-      213: 150215542138296199
-    second: Noble_7
+      213: -7232600524240232993
+    second: Knight_7
   - first:
-      213: 6729364577458875183
-    second: Noble_8
+      213: -3132395524043622482
+    second: Knight_8
   - first:
-      213: -7799606621883388049
-    second: Noble_9
+      213: -3454224475449390428
+    second: Knight_9
   - first:
-      213: -7244318491380738720
-    second: Noble_10
+      213: -1931806161188048838
+    second: Knight_10
   - first:
-      213: 5268763155418232354
-    second: Noble_11
+      213: 8050277750723066518
+    second: Knight_11
+  - first:
+      213: 2229256323763687605
+    second: KnightBlocking_0
+  - first:
+      213: -8932861179568496307
+    second: KnightBlocking_1
+  - first:
+      213: 3800728528309939615
+    second: KnightBlocking_2
+  - first:
+      213: 6369847089197415977
+    second: KnightBlocking_3
+  - first:
+      213: 4238754200611646123
+    second: KnightBlocking_4
+  - first:
+      213: 7572991554971970151
+    second: KnightBlocking_5
+  - first:
+      213: -8109713438945879250
+    second: KnightBlocking_6
+  - first:
+      213: 8838369113807524101
+    second: KnightBlocking_7
+  - first:
+      213: -1806679013082287882
+    second: KnightBlocking_8
+  - first:
+      213: 2462478692675236383
+    second: KnightBlocking_9
+  - first:
+      213: 1351599045443560505
+    second: KnightBlocking_10
+  - first:
+      213: -4482087294321019644
+    second: KnightBlocking_11
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -103,7 +139,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -115,7 +151,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -151,7 +187,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -162,7 +198,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Noble_0
+      name: KnightBlocking_0
       rect:
         serializedVersion: 2
         x: 0
@@ -176,14 +212,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7f0d62ae36526d820800000000000000
-      internalID: 2942580517593600247
+      spriteID: 5b05a3bb0d8efee10800000000000000
+      internalID: 2229256323763687605
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_1
+      name: KnightBlocking_1
       rect:
         serializedVersion: 2
         x: 32
@@ -197,14 +233,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ceb1a42eb074de5a0800000000000000
-      internalID: -6490453371604296724
+      spriteID: d4161f3e51a180480800000000000000
+      internalID: -8932861179568496307
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_2
+      name: KnightBlocking_2
       rect:
         serializedVersion: 2
         x: 64
@@ -218,14 +254,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8bc0bf730858c2530800000000000000
-      internalID: 3831584168726957240
+      spriteID: f9d6b999576eeb430800000000000000
+      internalID: 3800728528309939615
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_3
+      name: KnightBlocking_3
       rect:
         serializedVersion: 2
         x: 0
@@ -239,14 +275,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 23f679f491fccc360800000000000000
-      internalID: 7191350412620295986
+      spriteID: 92efa21cd2e366850800000000000000
+      internalID: 6369847089197415977
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_4
+      name: KnightBlocking_4
       rect:
         serializedVersion: 2
         x: 32
@@ -260,14 +296,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8974e181cf493e230800000000000000
-      internalID: 3666938332067022744
+      spriteID: baae6a1dc7413da30800000000000000
+      internalID: 4238754200611646123
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_5
+      name: KnightBlocking_5
       rect:
         serializedVersion: 2
         x: 64
@@ -281,14 +317,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4191611ab5580c3a0800000000000000
-      internalID: -6647166421407753964
+      spriteID: 76a232122bba81960800000000000000
+      internalID: 7572991554971970151
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_6
+      name: KnightBlocking_6
       rect:
         serializedVersion: 2
         x: 0
@@ -302,14 +338,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d1a6670a87867d790800000000000000
-      internalID: -7505415386692163043
+      spriteID: e2b5b692892847f80800000000000000
+      internalID: -8109713438945879250
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_7
+      name: KnightBlocking_7
       rect:
         serializedVersion: 2
         x: 32
@@ -323,14 +359,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 78755ec5d3ca51200800000000000000
-      internalID: 150215542138296199
+      spriteID: 501184e91e138aa70800000000000000
+      internalID: 8838369113807524101
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_8
+      name: KnightBlocking_8
       rect:
         serializedVersion: 2
         x: 64
@@ -344,14 +380,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f2b6883fd61836d50800000000000000
-      internalID: 6729364577458875183
+      spriteID: 6f0b31282036de6e0800000000000000
+      internalID: -1806679013082287882
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_9
+      name: KnightBlocking_9
       rect:
         serializedVersion: 2
         x: 0
@@ -365,14 +401,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f6f2bdaf91b32c390800000000000000
-      internalID: -7799606621883388049
+      spriteID: f1230eff25b7c2220800000000000000
+      internalID: 2462478692675236383
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_10
+      name: KnightBlocking_10
       rect:
         serializedVersion: 2
         x: 32
@@ -386,14 +422,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0651571d6b2077b90800000000000000
-      internalID: -7244318491380738720
+      spriteID: 934ab66bb28d1c210800000000000000
+      internalID: 1351599045443560505
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Noble_11
+      name: KnightBlocking_11
       rect:
         serializedVersion: 2
         x: 64
@@ -407,8 +443,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 226be5cbc286e1940800000000000000
-      internalID: 5268763155418232354
+      spriteID: 40534b95a5d6cc1c0800000000000000
+      internalID: -4482087294321019644
       vertices: []
       indices: 
       edges: []
