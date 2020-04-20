@@ -346,12 +346,13 @@ public class BattleUI : MonoBehaviour
         if(awaitingInput && currentAction == Action.TAUNT)
         {
             //send to battle manager
-            battleManager.taunt(clicked, currentlySelected);
+            if(battleManager.taunt(clicked, currentlySelected))
+            {
+                //clear button
+                currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
 
-            //clear button
-            currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
-
-            unSelect();
+                unSelect();
+            }
         }
     }
 
@@ -465,17 +466,7 @@ public class BattleUI : MonoBehaviour
             }
             else if(currentAction == Action.TAUNT)
             {
-                if (currentlySelected.GetComponent<ControllableUnit>().hasTakenAction) return;
-
-                if(clicked.CompareTag("Assassin"))
-                {
-                    //Taunt the assassin
-
-                    if(!debugUnlimitedMovement)
-                        currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
-
-                    unSelect();
-                }
+                //this will never get called, as you can't click on unit and have it be assassin
             }
         }
         else

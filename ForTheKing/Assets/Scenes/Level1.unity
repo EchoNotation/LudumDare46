@@ -1232,7 +1232,12 @@ PrefabInstance:
     - target: {fileID: 2262507056489027306, guid: 9a4f9735115c20f499395ae469984a83,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7702462768070395961, guid: 9a4f9735115c20f499395ae469984a83,
+        type: 3}
+      propertyPath: range
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a4f9735115c20f499395ae469984a83, type: 3}
@@ -1472,6 +1477,11 @@ PrefabInstance:
       propertyPath: gold
       value: 
       objectReference: {fileID: 1844179749}
+    - target: {fileID: 161150808904282777, guid: 42b9a37b5c98b374cb637204aacca756,
+        type: 3}
+      propertyPath: turnsToSurvive
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 2928117637307730891, guid: 42b9a37b5c98b374cb637204aacca756,
         type: 3}
       propertyPath: m_Name
@@ -1776,6 +1786,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Assassin (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2262507056489027306, guid: 9a4f9735115c20f499395ae469984a83,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a4f9735115c20f499395ae469984a83, type: 3}

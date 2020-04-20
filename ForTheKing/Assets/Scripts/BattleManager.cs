@@ -202,7 +202,7 @@ public class BattleManager : MonoBehaviour
                 turnTargetObj = GameObject.FindGameObjectWithTag("King");
             }
 
-            Vector2Int[] fullPath = findPathClosest(2, pos, turnTargetPos);
+            Vector2Int[] fullPath = findPathClosestAssassin(2, pos, turnTargetPos);
 
             script.target = null;
             script.endAction = Assassin.EndAction.IDLE;
@@ -220,75 +220,83 @@ public class BattleManager : MonoBehaviour
 
                     //check that along the path isn't someone to stab
                     //check stab up
-                    if(isStabbable(currentPath[j] + new Vector2Int(0,1)))
+                    if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(0,1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(0, 1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
+                        break;
                     }
 
                     //check stab up left
-                    else if(isStabbable(currentPath[j] + new Vector2Int(-1,0)))
+                    else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(-1,0)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, 0));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
+                        break;
                     }
 
                     //check stab up right
-                    else if(isStabbable(currentPath[j] + new Vector2Int(1,1)))
+                    else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(1,1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, 1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
+                        break;
                     }
 
                     //check stab right
-                    else if(isStabbable(currentPath[j] + new Vector2Int(1,0)))
+                    else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(1,0)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, 0));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
+                        break;
                     }
 
                     //check stab left
-                    else if(isStabbable(currentPath[j] + new Vector2Int(-1,0)))
+                    else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(-1,0)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, 0));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
+                        break;
                     }
 
                     //check stab down left
-                    else if(isStabbable(currentPath[j] + new Vector2Int(-1,-1)))
+                    else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(-1,-1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, -1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
+                        break;
                     }
 
                     //check stab down right
-                    else if(isStabbable(currentPath[j] + new Vector2Int(1,-1)))
+                    else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(1,-1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, -1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
+                        break;
                     }
 
                     //check stab down
-                    else if(isStabbable(currentPath[j] + new Vector2Int(0,-1)))
+                    else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(0,-1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(0, -1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
+                        break;
                     }
 
                     //if no one to stab, keep walking towards turnTarget
@@ -520,16 +528,22 @@ public class BattleManager : MonoBehaviour
         moveGoldPrefab(pos);
     }
     
-    public void taunt(GameObject target, GameObject taunter)
+    /*
+     * returns true if taunter can taunt target, false otherwise
+     */
+    public bool taunt(GameObject target, GameObject taunter)
     {
         RaycastHit2D hit = lineOfSight(taunter, target);
-        if(hit.transform.CompareTag("Unit"))
+        if(hit.transform.CompareTag("Assassin"))
         {
             target.GetComponent<Assassin>().taunter = taunter;
             target.GetComponent<Assassin>().taunted = true;
 
             predictAssassinMove();
+
+            return true;
         }
+        return false;
 
     }
 
@@ -727,6 +741,16 @@ public class BattleManager : MonoBehaviour
         return aStar(range, start, end);
     }
 
+    public Vector2Int[] findPathClosestAssassin(int range, Vector2Int src, Vector2Int dest)
+    {
+        Node start = new Node(null, src.x, src.y);
+        Node end = new Node(null, dest.x, dest.y);
+
+        return aStarAssassin(range, start, end);
+    }
+
+
+
     private Vector2Int[] aStar(int range, Node start, Node end)
     {
         List<Node> open = new List<Node>();
@@ -762,22 +786,22 @@ public class BattleManager : MonoBehaviour
             //generate children for all 8 directions
             List<Node> children = new List<Node>();
 
-            Node upLeft = createChildIfValid(current_node, -1, 1);
+            /*Node upLeft = createChildIfValid(current_node, -1, 1);
             if (upLeft != null)
             {
                 children.Add(upLeft);
                 upLeft.g += 0.5;
-            }
+            }*/
             
             Node upMid = createChildIfValid(current_node, 0, 1);
             if (upMid != null) children.Add(upMid);
 
-            Node upRight = createChildIfValid(current_node, 1, 1);
+            /*Node upRight = createChildIfValid(current_node, 1, 1);
             if (upRight != null)
             {
                 upRight.g += 0.5;
                 children.Add(upRight);
-            }
+            }*/
             
             Node left = createChildIfValid(current_node, -1, 0);
             if (left != null)
@@ -791,22 +815,22 @@ public class BattleManager : MonoBehaviour
                 children.Add(right);
             }
 
-            Node downLeft = createChildIfValid(current_node, -1, -1);
+            /*Node downLeft = createChildIfValid(current_node, -1, -1);
             if (downLeft != null)
             {
                 downLeft.g += 0.5;
                 children.Add(downLeft);
-            }
+            }*/
 
             Node downMid = createChildIfValid(current_node, 0, -1);
             if (downMid != null) children.Add(downMid);
 
-            Node downRight = createChildIfValid(current_node, 1, -1);
+            /*Node downRight = createChildIfValid(current_node, 1, -1);
             if (downRight != null)
             {
                 downRight.g += 0.5;
                 children.Add(downRight);
-            }
+            }*/
 
             //loop through children
             for(int i = 0; i < children.Count; i++)
@@ -874,6 +898,155 @@ public class BattleManager : MonoBehaviour
         }
         else return null;
     }
+
+    private Vector2Int[] aStarAssassin(int range, Node start, Node end)
+    {
+        List<Node> open = new List<Node>();
+        List<Node> closed = new List<Node>();
+
+        open.Add(start);
+
+        //loop until reach the end
+        while(open.Count > 0)
+        {
+            Node current_node = open[0];
+            int currentIdx = 0;
+
+            //search for node closest to destination
+            for(int i = 0; i < open.Count; i++)
+            {
+                if(open[i].f < current_node.f)
+                {
+                    current_node = open[i];
+                    currentIdx = i;
+                }
+            }
+
+            //remove that
+            open.RemoveAt(currentIdx);
+            closed.Add(current_node);
+
+            if(current_node.x == start.x && current_node.y == end.y)
+            {
+                return constructPath(start, current_node);
+            }
+
+            //generate children for all 8 directions
+            List<Node> children = new List<Node>();
+
+            /*Node upLeft = createChildIfValid(current_node, -1, 1);
+            if (upLeft != null)
+            {
+                children.Add(upLeft);
+                upLeft.g += 0.5;
+            }*/
+            
+            Node upMid = createChildIfValidThroughUnits(current_node, 0, 1);
+            if (upMid != null) children.Add(upMid);
+
+            /*Node upRight = createChildIfValid(current_node, 1, 1);
+            if (upRight != null)
+            {
+                upRight.g += 0.5;
+                children.Add(upRight);
+            }*/
+            
+            Node left = createChildIfValidThroughUnits(current_node, -1, 0);
+            if (left != null)
+            {
+                children.Add(left);
+            }
+
+            Node right = createChildIfValidThroughUnits(current_node, 1, 0);
+            if (right != null)
+            {
+                children.Add(right);
+            }
+
+            /*Node downLeft = createChildIfValid(current_node, -1, -1);
+            if (downLeft != null)
+            {
+                downLeft.g += 0.5;
+                children.Add(downLeft);
+            }*/
+
+            Node downMid = createChildIfValidThroughUnits(current_node, 0, -1);
+            if (downMid != null) children.Add(downMid);
+
+            /*Node downRight = createChildIfValid(current_node, 1, -1);
+            if (downRight != null)
+            {
+                downRight.g += 0.5;
+                children.Add(downRight);
+            }*/
+
+            //loop through children
+            for(int i = 0; i < children.Count; i++)
+            {
+                if(closed.Contains(children[i]))
+                {
+                    continue;
+                }
+
+                //update values
+                children[i].g = current_node.g + 1;
+                //children[i].h = Mathf.CeilToInt(Vector2Int.Distance(new Vector2Int(children[i].x, children[i].y), new Vector2Int(end.x,end.y)));
+                children[i].h = Mathf.CeilToInt(Mathf.Abs(children[i].x - end.x) + Mathf.Abs(children[i].y - end.y));
+                children[i].f = children[i].g + children[i].h;
+
+                if(children[i].h < range && range != -1)
+                {
+                    return constructPath(start, children[i]);
+                }
+
+                bool wasOpen = false;
+
+                //add child to open list if not on the list already with more efficient path
+                for(int j = 0; j < open.Count; j++)
+                {
+                    if(children[i].Equals(open[j]))
+                    {
+                        if(children[i].g < open[j].g)
+                        {
+                            open[j].g = children[i].g;
+                        }
+                        wasOpen = true;
+                        break;
+                    }
+                }
+
+                if (wasOpen) continue;
+
+                open.Add(children[i]);
+            }
+        }
+
+        //no path found
+        if (range != -1)
+        {
+            //find the child that got the closest
+            double closestDist = 100;
+            Node closest = null;
+
+            for(int i = 0; i < closed.Count; i++)
+            {
+                if(closed[i].h < closestDist)
+                {
+                    closestDist = closed[i].h;
+                    closest = closed[i];
+                }
+            }
+
+            if (closest != null)
+            {
+                Debug.Log("couldn't get within range, closest was " + closest.h + " tiles away at " + closest.x + ", " + closest.y);
+                return constructPath(start, closest);
+            }
+            else return null;
+        }
+        else return null;
+    }
+
 
     private Vector2Int[] constructPath(Node start, Node end)
     {
@@ -947,6 +1120,26 @@ public class BattleManager : MonoBehaviour
         return child;
     }
 
+    private Node createChildIfValidThroughUnits(Node parent, int offsetx, int offsety)
+    {
+        Node child = new Node(parent, parent.x + offsetx, parent.y + offsety);
+
+        //check bounds
+        if(child.x < -5 || child.x > 4 || child.y > 4 || child.y < -5)
+        {
+            return null;
+        }
+
+        //check valid square to move to
+        int boardSquareID = board[gridSize - 1 - (child.y + 5)][child.x + 5];
+        if(boardSquareID == wall || boardSquareID == assassin)
+        {
+            return null;
+        }
+
+        //safety checks passed
+        return child;
+    }
 
 
     public void commit()
