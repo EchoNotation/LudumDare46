@@ -1324,6 +1324,10 @@ public class BattleManager : MonoBehaviour
 
                 Debug.Log("to place wanted to go");
             }
+
+            script.taunted = false;
+            script.taunter = null;
+            script.target = null;
         }
     }
 
