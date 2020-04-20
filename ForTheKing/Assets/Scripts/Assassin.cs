@@ -23,6 +23,7 @@ public class Assassin : MonoBehaviour
     public GameObject target;
 
     public GameObject taunter;
+    public bool taunted;
 
     public int speed = 2;
 

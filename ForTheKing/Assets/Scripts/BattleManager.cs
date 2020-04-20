@@ -186,17 +186,23 @@ public class BattleManager : MonoBehaviour
             Assassin script = assassins[i].GetComponent<Assassin>();
             Vector2Int pos = new Vector2Int(script.gridX - gridSize/2, script.gridY - gridSize/2);
 
-            if(script.taunter != null)
+            Vector2Int turnTargetPos = new Vector2Int();
+            GameObject turnTargetObj = null;
+            if(script.taunted)
             {
+                Debug.Log("Assassin has been taunted");
+                ControllableUnit controls = script.taunter.GetComponent<ControllableUnit>();
+                turnTargetPos = new Vector2Int(controls.gridX - gridSize/2, controls.gridY - gridSize/2);
 
+                turnTargetObj = script.taunter;
             }
             else
             {
-                //go after king or stab people on way to king
-                
+                turnTargetPos = kingPos;
+                turnTargetObj = GameObject.FindGameObjectWithTag("King");
             }
 
-            Vector2Int[] fullPath = findPathClosest(2, pos, kingPos);
+            Vector2Int[] fullPath = findPathClosest(2, pos, turnTargetPos);
 
             script.target = null;
             script.endAction = Assassin.EndAction.IDLE;
@@ -285,12 +291,13 @@ public class BattleManager : MonoBehaviour
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
                     }
 
-                    //if no one to stab, keep walking towards king
-                    else if(script.endAction != Assassin.EndAction.STAB && Vector2Int.Distance(currentPath[j], kingPos) <= script.range)
+                    //if no one to stab, keep walking towards turnTarget
+                    else if(script.endAction != Assassin.EndAction.STAB && Vector2Int.Distance(currentPath[j], turnTargetPos) <= script.range)
                     {
                         Debug.Log("not stabbing and in shooting range");
                         //if good distance, check sightline for wall
-                        RaycastHit2D hit = lineOfSight(assassins[i], kingObj);
+                        RaycastHit2D hit = lineOfSight(assassins[i], turnTargetObj);
+                        Debug.Log("raycast hit " + hit.point + " to " + hit.transform.name);
                         if(hit.collider.tag == "King")
                         {
                             //aim
@@ -340,7 +347,7 @@ public class BattleManager : MonoBehaviour
      */
     public GameObject gameObjectAtTile(Vector2Int pos)
     {
-        Debug.Log("looking for game object at " + pos);
+        //Debug.Log("looking for game object at " + pos);
 
         int gridX = pos.x + 5;
         int gridY = pos.y + 5;
@@ -375,7 +382,7 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        Debug.Log("found no game objects at that tile");
+        //Debug.Log("found no game objects at that tile");
         return null;
     }
 
@@ -516,6 +523,9 @@ public class BattleManager : MonoBehaviour
     public void taunt(GameObject target, GameObject taunter)
     {
         target.GetComponent<Assassin>().taunter = taunter;
+        target.GetComponent<Assassin>().taunted = true;
+
+        predictAssassinMove();
     }
 
     public void block()
@@ -536,7 +546,7 @@ public class BattleManager : MonoBehaviour
     }
 
     //PATHFINDING
-    class Node
+    private class Node
     {
         public int x;
         public int y;
@@ -559,6 +569,11 @@ public class BattleManager : MonoBehaviour
         {
             Node o = (Node)obj;
             return o.x == x && o.y == y;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 
