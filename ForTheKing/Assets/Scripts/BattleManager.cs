@@ -778,7 +778,7 @@ public class BattleManager : MonoBehaviour
             open.RemoveAt(currentIdx);
             closed.Add(current_node);
 
-            if(current_node.x == start.x && current_node.y == end.y)
+            if(current_node.x == end.x && current_node.y == end.y)
             {
                 return constructPath(start, current_node);
             }
@@ -926,7 +926,7 @@ public class BattleManager : MonoBehaviour
             open.RemoveAt(currentIdx);
             closed.Add(current_node);
 
-            if(current_node.x == start.x && current_node.y == end.y)
+            if(current_node.x == end.x && current_node.y == end.y)
             {
                 return constructPath(start, current_node);
             }
@@ -1394,7 +1394,8 @@ public class BattleManager : MonoBehaviour
                 int origX = civilians[i].GetComponent<Civilian>().gridX;
                 int origY = civilians[i].GetComponent<Civilian>().gridY;
 
-                //Debug.Log("CivPos: " + origX + " " + origY);
+                Debug.Log("CivPos: " + origX + " " + origY);
+                Debug.Log("gold pos: " + goldTilePos[turnNumber]);
 
                 Vector2Int[] pathToGold = findPathClosest(0, new Vector2Int(origX - 5, origY - 5), new Vector2Int(goldTilePos[turnNumber].x, goldTilePos[turnNumber].y));
 
