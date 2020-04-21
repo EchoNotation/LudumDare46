@@ -39,7 +39,7 @@ public class Assassin : MonoBehaviour
     private System.Diagnostics.Stopwatch timer;
     private int animationPhase, animationSpeed;
     private long initialTime;
-    private Direction facing;
+    public Direction facing;
     public Sprite[] sprites, bowSprites;
 
     public bool drawingBow;
