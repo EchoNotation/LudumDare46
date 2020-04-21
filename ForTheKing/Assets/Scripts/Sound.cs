@@ -10,7 +10,9 @@ public enum Sounds
     STAB,
     COIN,
     WALK,
-    SHOVE
+    SHOVE,
+    ERROR,
+    VICTORY
 }
 
 public class Sound : MonoBehaviour
@@ -29,16 +31,15 @@ public class Sound : MonoBehaviour
         {
             sources[i].clip = clips[i];
             sources[i].volume = 0.6f;
+
+            if (i == 7) sources[i].volume = 0.05f;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            playSound();
-        }
+        if (sources[1].isPlaying) sources[0].Stop();
     }
 
     public void playSound()
@@ -67,6 +68,12 @@ public class Sound : MonoBehaviour
                 break;
             case Sounds.SHOVE:
                 i = 6;
+                break;
+            case Sounds.ERROR:
+                i = 7;
+                break;
+            case Sounds.VICTORY:
+                i = 8;
                 break;
             default:
                 Debug.Log("Sound missing from playSound cases! Sound: " + sound.ToString());

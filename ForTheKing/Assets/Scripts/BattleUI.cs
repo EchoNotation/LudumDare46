@@ -21,6 +21,7 @@ public class BattleUI : MonoBehaviour
     int gridSize;
 
     BattleManager battleManager;
+    Sound sound;
 
     Tilemap tiles;
 
@@ -53,6 +54,7 @@ public class BattleUI : MonoBehaviour
         battleManager = FindObjectOfType<BattleManager>();
         optionCanvas.enabled = false;
         gridSize = BattleManager.gridSize;
+        sound = GameObject.Find("AudioManager").GetComponent<Sound>();
     }
 
     // Update is called once per frame
@@ -86,7 +88,11 @@ public class BattleUI : MonoBehaviour
     {
         //highlight movable areas Knight: moves like chess King, Noble: moves in 5 diameter circle, Jester: moves in 7 diameter circle
 
-        if (currentlySelected.GetComponent<ControllableUnit>().hasMoved) return;
+        if (currentlySelected.GetComponent<ControllableUnit>().hasMoved)
+        {
+            sound.sound = Sounds.ERROR;
+            sound.playSound();
+        }
 
         //if already moving, cancel moving
         if (currentAction == Action.MOVE)
@@ -309,7 +315,12 @@ public class BattleUI : MonoBehaviour
                     }
                 }
 
-                if (!validMovement) return;
+                if (!validMovement)
+                {
+                    sound.sound = Sounds.ERROR;
+                    sound.playSound();
+                    return;
+                }
                 if (currentlySelected.GetComponent<ControllableUnit>().hasMoved) return;
 
                 //forward to battle manager
@@ -334,6 +345,8 @@ public class BattleUI : MonoBehaviour
                 if (tempBoard[(gridSize - 1) - (y + 5)][(x + 5)] != battleManager.passable) return;
 
                 battleManager.tossCoin(new Vector2Int(x, y));
+                sound.sound = Sounds.COIN;
+                sound.playSound();
 
                 if(!debugUnlimitedMovement)
                     currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
@@ -458,12 +471,24 @@ public class BattleUI : MonoBehaviour
                     {
                         //Debug.Log("BoardSpace: " + tempBoard[iCoord][jCoord]);
                         battleManager.shove(clicked, shoveDir);
+                        sound.sound = Sounds.SHOVE;
+                        sound.playSound();
                         
                         if(!debugUnlimitedMovement)
                             currentlySelected.GetComponent<ControllableUnit>().hasTakenAction = true;
 
                         unSelect();
-                    }                  
+                    }      
+                    else
+                    {
+                        sound.sound = Sounds.ERROR;
+                        sound.playSound();
+                    }
+                }
+                else
+                {
+                    sound.sound = Sounds.ERROR;
+                    sound.playSound();
                 }
             }
             else if(currentAction == Action.TAUNT)

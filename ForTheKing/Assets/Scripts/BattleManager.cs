@@ -46,6 +46,8 @@ public class BattleManager : MonoBehaviour
     private Vector3 goldRestingPlace = new Vector3(-15, 0, 0);
 
     BattleUI battleUI;
+    Sound sound;
+    private bool previouslyDrawing = false;
 
     public Text cavalryText;
     public int turnsToSurvive;
@@ -66,7 +68,7 @@ public class BattleManager : MonoBehaviour
         }
 
         board = new int[gridSize][];
-
+        sound = GameObject.Find("AudioManager").GetComponent<Sound>();
         readTiles();
         controllableUnits = GameObject.FindGameObjectsWithTag("Unit");
         assassins = GameObject.FindGameObjectsWithTag("Assassin");
@@ -195,6 +197,7 @@ public class BattleManager : MonoBehaviour
                 Debug.Log("Assassin has been taunted");
                 ControllableUnit controls = script.taunter.GetComponent<ControllableUnit>();
                 turnTargetPos = new Vector2Int(controls.gridX - gridSize/2, controls.gridY - gridSize/2);
+                previouslyDrawing = false;
 
                 turnTargetObj = script.taunter;
             }
@@ -225,6 +228,7 @@ public class BattleManager : MonoBehaviour
                     if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(0,1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
+                        previouslyDrawing = false;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(0, 1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
@@ -235,6 +239,7 @@ public class BattleManager : MonoBehaviour
                     else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(-1,0)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
+                        previouslyDrawing = false;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, 0));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
@@ -245,6 +250,7 @@ public class BattleManager : MonoBehaviour
                     else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(1,1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
+                        previouslyDrawing = false;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, 1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
@@ -255,6 +261,7 @@ public class BattleManager : MonoBehaviour
                     else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(1,0)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
+                        previouslyDrawing = false;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, 0));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
@@ -265,6 +272,7 @@ public class BattleManager : MonoBehaviour
                     else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(-1,0)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
+                        previouslyDrawing = false;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, 0));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
@@ -275,6 +283,7 @@ public class BattleManager : MonoBehaviour
                     else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(-1,-1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
+                        previouslyDrawing = false;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(-1, -1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
@@ -285,6 +294,7 @@ public class BattleManager : MonoBehaviour
                     else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(1,-1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
+                        previouslyDrawing = false;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(1, -1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
@@ -295,6 +305,7 @@ public class BattleManager : MonoBehaviour
                     else if(!script.taunted && isStabbable(currentPath[j] + new Vector2Int(0,-1)))
                     {
                         script.endAction = Assassin.EndAction.STAB;
+                        previouslyDrawing = false;
                         script.target = gameObjectAtTile(currentPath[j] + new Vector2Int(0, -1));
                         //excange for "stab marker"
                         battleUI.createMarkerAtTile(currentPath[j], assassinMarker);
@@ -314,7 +325,15 @@ public class BattleManager : MonoBehaviour
                             script.endAction = Assassin.EndAction.AIM;
                             script.target = kingObj;
                             script.drawingBow = true;
+
+                            if(!previouslyDrawing)
+                            {
+                                sound.sound = Sounds.BOW_DRAW;
+                                sound.playSound();
+                                previouslyDrawing = true;
+                            }
                             break;
+
                         }
                         else if(hit.collider.tag == "Unit")
                         {
@@ -322,6 +341,13 @@ public class BattleManager : MonoBehaviour
                             script.endAction = Assassin.EndAction.AIM;
                             script.target = hit.collider.gameObject;
                             script.drawingBow = true;
+
+                            if (!previouslyDrawing)
+                            {
+                                sound.sound = Sounds.BOW_DRAW;
+                                sound.playSound();
+                                previouslyDrawing = true;
+                            }
                             break;
                         }
                         else if(hit.collider.tag == "Civilian")
@@ -330,6 +356,13 @@ public class BattleManager : MonoBehaviour
                             script.endAction = Assassin.EndAction.AIM;
                             script.target = hit.collider.gameObject;
                             script.drawingBow = true;
+
+                            if (!previouslyDrawing)
+                            {
+                                sound.sound = Sounds.BOW_DRAW;
+                                sound.playSound();
+                                previouslyDrawing = true;
+                            }
                             break;
                         }
 
@@ -535,6 +568,8 @@ public class BattleManager : MonoBehaviour
         goldTilePos[turnNumber] = pos;
         goldWasPlacedThisTurn[turnNumber] = true;
         moveGoldPrefab(pos);
+        sound.sound = Sounds.COIN;
+        sound.playSound();
     }
     
     /*
@@ -1181,6 +1216,8 @@ public class BattleManager : MonoBehaviour
         else if(turnsToSurvive <= 0)
         {
             //Victory!
+            sound.sound = Sounds.VICTORY;
+            sound.playSound();
             GameObject.Find("SceneManager").GetComponent<SceneController>().LoadScene("Victory");
         }
         else
@@ -1567,6 +1604,8 @@ public class BattleManager : MonoBehaviour
 
                 //stab the person
                 killGameObject(script.target);
+                sound.sound = Sounds.STAB;
+                sound.playSound();
             }
             else if (script.endAction == Assassin.EndAction.AIM)
             {
@@ -1578,7 +1617,8 @@ public class BattleManager : MonoBehaviour
 
                 //stab the person
                 killGameObject(script.target);
-                
+                sound.sound = Sounds.ARROW_HIT;
+                sound.playSound();
             }
             else if (script.endAction == Assassin.EndAction.IDLE)
             {
