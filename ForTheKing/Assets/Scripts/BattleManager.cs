@@ -1714,6 +1714,7 @@ public class BattleManager : MonoBehaviour
     public bool isPassableAtTileSpace(Vector2Int pos)
     {
         int tile = getTileAtSpace(pos);
+        if (tile == knight && gameObjectAtTile(pos).GetComponent<ControllableUnit>().blocking == true) return false;
         return tile == passable;
 
     }
